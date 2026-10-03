@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧭 Around the World: Gap Year Mission — Escape Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Vollkorn:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --kraft:#E7D8B6;--kraft2:#DCC79C;--kraftln:#C7AE80;--paper:#F7EFDD;
+  --navy:#1F3B4D;--navy2:#2F5C74;--nl:#E3EDF1;
+  --stamp:#B5451B;--stamp2:#D46A3E;--sl:#F7E4D8;
+  --gold:#B8892B;--gl:#F5EAD0;
+  --red:#B5301F;--green:#3F7D4F;
+  --ink:#2B2117;
+  --bg:radial-gradient(ellipse at top,#F2E7CB 0%,#E7D3A6 55%,#DCC393 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Vollkorn',Georgia,serif;background:var(--bg);min-height:100vh;background-attachment:fixed;color:var(--ink)}
+h1,h2,h3,.pop{font-family:'Special Elite',monospace;letter-spacing:.01em}
+.hand{font-family:'Caveat',cursive}
+.page{max-width:800px;margin:0 auto;padding:16px 18px 40px}
+.card{background:var(--paper);border-radius:6px;box-shadow:0 5px 0 rgba(43,33,23,.06),0 8px 24px rgba(43,33,23,.14);padding:24px;margin-bottom:14px;border:1px solid var(--kraftln);position:relative}
+.card-navy{border-top:4px solid var(--navy)}
+.card-stamp{border-top:4px solid var(--stamp)}
+.card-gold{border-top:4px solid var(--gold)}
+/* ── Washi tape corner ── */
+.tape{position:absolute;top:-10px;left:26px;width:64px;height:22px;background:repeating-linear-gradient(45deg,var(--gold),var(--gold) 6px,#C9A94A 6px,#C9A94A 12px);opacity:.75;transform:rotate(-4deg);box-shadow:0 2px 3px rgba(0,0,0,.15)}
+/* ── Buttons ── */
+.btn{border:none;cursor:pointer;font-family:'Special Elite',monospace;font-weight:400;border-radius:4px;padding:10px 22px;font-size:.86rem;letter-spacing:.03em;display:inline-flex;align-items:center;gap:6px;transition:transform .12s,box-shadow .12s}
+.btn:active{transform:scale(.96)!important}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn-navy{background:var(--navy);color:#fff;box-shadow:0 3px 0 #0F232F}
+.btn-navy:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 0 #0F232F}
+.btn-stamp{background:var(--stamp);color:#fff;box-shadow:0 3px 0 #7A2A0F}
+.btn-stamp:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 0 #7A2A0F}
+.btn-gold{background:var(--gold);color:#2B2117;box-shadow:0 3px 0 #7C5D1B}
+.btn-gold:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 0 #7C5D1B}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 3px 0 #7A1F13}
+.btn-red:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 0 #7A1F13}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 3px 0 #275434}
+.btn-green:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 0 #275434}
+.btn-gray{background:#DED2B6;color:#5A4E38}
+.btn-gray:hover:not(:disabled){background:#CFC1A0}
+.btn-outline{background:transparent;color:var(--navy);border:2px solid var(--navy)}
+.btn-outline:hover:not(:disabled){background:var(--nl)}
+.lg{font-size:.98rem;padding:13px 30px}
+.sm{font-size:.76rem;padding:6px 14px}
+.full{width:100%;justify-content:center}
+/* ── Header ── */
+.hdr{background:rgba(247,239,221,.96);backdrop-filter:blur(8px);border-bottom:2px solid var(--kraftln);padding:10px 0;position:sticky;top:0;z-index:30;box-shadow:0 2px 10px rgba(43,33,23,.12)}
+.hdr-in{max-width:800px;margin:0 auto;padding:0 18px;display:flex;align-items:center;gap:12px}
+/* ── Progress (passport stamps) ── */
+.prg{display:flex;align-items:center;flex:1}
+.prg-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;transition:all .3s;flex-shrink:0;border:2px dashed transparent}
+.prg-done{background:var(--navy);color:#fff;box-shadow:0 0 0 3px var(--nl)}
+.prg-active{background:var(--stamp);color:#fff;box-shadow:0 0 0 3px var(--sl);border-color:#fff;animation:pls .8s ease-in-out infinite}
+.prg-future{background:#EAE0C6;color:#B3A480}
+.prg-line{flex:1;height:2px;margin:0 2px;background-image:linear-gradient(to right,var(--kraftln) 40%,transparent 0%);background-size:6px 2px;background-repeat:repeat-x}
+.prg-lbl{font-size:.5rem;font-weight:700;color:#A9976D;text-align:center;margin-top:2px;max-width:50px;line-height:1.1}
+/* ── Score pill (passport) ── */
+.sc-pill{background:var(--navy);color:#fff;padding:5px 15px;border-radius:4px;font-weight:700;font-size:.85rem;white-space:nowrap;box-shadow:0 3px 8px rgba(31,59,77,.35);font-family:'Special Elite'}
+.score-fab{position:fixed;top:12px;right:14px;z-index:45;background:var(--navy);color:#fff;padding:7px 16px;border-radius:4px;font-weight:700;font-size:.85rem;box-shadow:0 3px 12px rgba(31,59,77,.4);white-space:nowrap;font-family:'Special Elite';border:1px solid #0F232F}
+/* ── Persistent buttons ── */
+.prof-fab{position:fixed;bottom:16px;right:16px;z-index:40}
+.rep-fab{position:fixed;bottom:16px;left:16px;z-index:40}
+/* ── Inputs ── */
+input,textarea{font-family:'Vollkorn',serif;border:2px solid var(--kraftln);border-radius:5px;padding:10px 13px;font-size:.92rem;width:100%;outline:none;transition:border-color .2s,box-shadow .2s;background:#FFFCF4;color:var(--ink)}
+input:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(31,59,77,.12)}
+textarea{resize:vertical;font-family:'Vollkorn',serif;line-height:1.6}
+/* ── QCM ── */
+.opt{display:flex;align-items:center;gap:9px;padding:11px 14px;border:2px solid var(--kraftln);border-radius:6px;margin-bottom:8px;cursor:pointer;font-weight:600;font-size:.87rem;transition:border-color .15s,background .15s;background:#FFFCF4}
+.opt:hover{border-color:var(--navy2);background:var(--nl)}
+.opt.sel{border-color:var(--navy);background:#E3EDF1}
+.opt.right{border-color:var(--green);background:#E9F3EA}
+.opt.wrong{border-color:var(--red);background:#F8E6E2}
+.let{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0;transition:all .15s;font-family:'Special Elite'}
+/* ── V/F ── */
+.vfr{display:flex;align-items:center;gap:8px;padding:9px 12px;border:2px solid var(--kraftln);border-radius:6px;margin-bottom:7px;transition:all .15s;flex-wrap:wrap;background:#FFFCF4}
+.tvf{padding:5px 13px;border-radius:4px;border:2px solid;cursor:pointer;font-weight:700;font-size:.77rem;transition:all .15s;font-family:'Special Elite'}
+/* ── Matching ── */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mi{padding:9px 12px;border:2px solid var(--kraftln);border-radius:5px;cursor:pointer;font-weight:600;font-size:.82rem;min-height:50px;display:flex;align-items:center;transition:all .15s;line-height:1.35;background:#FFFCF4}
+.mi:hover:not(.mu):not(.mok):not(.mko){border-color:var(--stamp);background:var(--sl)}
+.mi.msel{border-color:var(--stamp);background:#F2D7C4;box-shadow:0 0 0 3px rgba(181,69,27,.18)}
+.mi.mu{opacity:.4;cursor:default;border-style:dashed}
+.mi.mok{border-color:var(--green);background:#E9F3EA;opacity:1;cursor:default}
+.mi.mko{border-color:var(--red);background:#F8E6E2;opacity:1;cursor:default}
+/* ── Situation postcard ── */
+.sit{background:#FFFCF4;border:2px dashed var(--navy);border-radius:8px;padding:18px;position:relative}
+.slbl{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--navy);margin-bottom:2px;font-family:'Special Elite'}
+.sval{font-weight:600;font-size:.9rem;margin-bottom:12px;line-height:1.5}
+.hint{background:var(--gl);border:2px dashed var(--gold);border-radius:6px;padding:9px 13px;font-size:.82rem;font-weight:700;color:#7C5D1B}
+/* ── Reading ── */
+.rtxt{background:#FFFCF4;border-left:4px solid var(--navy2);padding:15px;border-radius:0 6px 6px 0;font-size:.87rem;line-height:1.8;margin-bottom:14px;color:#333}
+/* ── Stamps (stars) ── */
+.stars{font-size:1.4rem;letter-spacing:2px;color:var(--gold)}
+/* ── Indice box (passport page) ── */
+.ibx{background:var(--navy);border-radius:8px;padding:26px;text-align:center;border:2px solid #0F232F}
+.iwd{font-family:'Special Elite',monospace;font-size:2.1rem;font-weight:400;color:#fff;letter-spacing:.06em;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+/* ── Banners ── */
+.ok{background:#E9F3EA;border:2px solid var(--green);border-radius:6px;padding:11px;font-weight:700;color:#1B4A28;font-size:.88rem}
+.ko{background:var(--gl);border:2px solid var(--gold);border-radius:6px;padding:11px;font-weight:700;color:#7C5D1B;font-size:.88rem}
+.err{background:#F8E6E2;border:2px solid var(--red);border-radius:6px;padding:11px;font-weight:700;color:#7A1F13;font-size:.88rem}
+/* ── Animations ── */
+@keyframes fadein{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pls{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+.fadein{animation:fadein .32s ease-out}
+.chip{background:var(--navy);color:#fff;padding:3px 11px;border-radius:4px;font-weight:700;font-size:.76rem;display:inline-block;margin:2px;font-family:'Special Elite'}
+@media(max-width:580px){.mg{grid-template-columns:1fr}.card{padding:17px}.iwd{font-size:1.5rem}.lg{font-size:.9rem;padding:11px 22px}}
+@media print{.noprint{display:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ═══════════════════════════ GAME DATA ═══════════════════════════ */
+const WW=['THIS','TRIP','CHANGED','MY','LIFE','FOREVER'];
+
+/* Mission 1 — Why a Gap Year? vocabulary bank (20 items) */
+const POOL1=[
+ {w:'Gap year',d:'A break taken between two stages of education or before starting work'},
+ {w:'Self-discovery',d:'The process of learning about your own character and values'},
+ {w:'Motivation',d:'A reason for doing something'},
+ {w:'Personal growth',d:"The development of one's skills, confidence and character"},
+ {w:'Volunteer work',d:'Unpaid work done to help other people or a cause'},
+ {w:'Work placement',d:'A period of practical work experience in a company'},
+ {w:'Cultural immersion',d:'Being fully surrounded by a foreign culture and language'},
+ {w:'Independence',d:'The ability to think and act for oneself'},
+ {w:'Life experience',d:'Knowledge gained through personal events and situations'},
+ {w:'Career break',d:"A planned pause in one's professional life"},
+ {w:'Adventure',d:'An exciting or unusual experience'},
+ {w:"Broaden one's horizons",d:"To increase one's knowledge and experience of the world"},
+ {w:'Self-confidence',d:"A feeling of trust in one's own abilities"},
+ {w:'Fresh perspective',d:'A new way of looking at something'},
+ {w:'Comfort zone',d:'A situation where a person feels safe and at ease'},
+ {w:'Life goal',d:'Something a person hopes to achieve in life'},
+ {w:'Travel abroad',d:'To visit or stay in a foreign country'},
+ {w:'Take a break',d:'To stop an activity for a period of time'},
+ {w:'Personal project',d:'A plan or activity undertaken by an individual'},
+ {w:'Time to reflect',d:'A period used to think carefully about something'}
+];
+
+/* Mission 2 — Gap Year Options: FR/EN vocabulary bank (20 items) */
+const POOL2=[
+ {w:'Bénévolat',d:'Volunteering'},
+ {w:'Stage professionnel',d:'Work placement'},
+ {w:'Échange linguistique',d:'Language exchange'},
+ {w:'Chantier international',d:'International work camp'},
+ {w:'Service civique',d:'Civic service'},
+ {w:'Séjour au pair',d:'Au pair stay'},
+ {w:'Voyage sac à dos',d:'Backpacking trip'},
+ {w:"Année d'études à l'étranger",d:'Study year abroad'},
+ {w:'Wwoofing',d:'Volunteering on organic farms'},
+ {w:'Mission humanitaire',d:'Humanitarian mission'},
+ {w:'Tour du monde',d:'Round-the-world trip'},
+ {w:'Job saisonnier',d:'Seasonal job'},
+ {w:'Cours de langue',d:'Language course'},
+ {w:'Projet solidaire',d:'Community project'},
+ {w:"Projet de protection de l'environnement",d:'Environmental conservation project'},
+ {w:'Enseignement bénévole',d:'Volunteer teaching'},
+ {w:'Randonnée',d:'Trekking'},
+ {w:'Immersion culturelle',d:'Cultural immersion'},
+ {w:'Formation en ligne',d:'Online training'},
+ {w:'Découverte professionnelle',d:'Career discovery'}
+];
+
+/* Mission 5 — Skills Gained: EN word / EN definition bank (20 items) */
+const POOL5=[
+ {w:'Adaptability',d:'The ability to adjust easily to new conditions'},
+ {w:'Autonomy',d:"The ability to act independently and make one's own decisions"},
+ {w:'Resilience',d:'The capacity to recover quickly from difficulties'},
+ {w:'Open-mindedness',d:'Willingness to consider new ideas and perspectives'},
+ {w:'Problem-solving',d:'The ability to find solutions to difficult situations'},
+ {w:'Time management',d:"The ability to organise one's time efficiently"},
+ {w:'Cross-cultural awareness',d:'Understanding of and respect for different cultures'},
+ {w:'Communication skills',d:'The ability to share information clearly with others'},
+ {w:'Budgeting',d:'Planning carefully how to spend money'},
+ {w:'Initiative',d:'The ability to act independently without being told to'},
+ {w:'Teamwork',d:'The ability to work well with others towards a common goal'},
+ {w:'Self-reliance',d:"The ability to rely on one's own capabilities"},
+ {w:'Confidence',d:"A strong belief in one's own abilities"},
+ {w:'Networking',d:'Building professional or personal relationships with others'},
+ {w:'Leadership',d:'The ability to guide and motivate a group of people'},
+ {w:'Flexibility',d:'Willingness to change plans according to circumstances'},
+ {w:'Empathy',d:'The ability to understand and share the feelings of others'},
+ {w:'Decision-making',d:'The process of choosing between different options'},
+ {w:'Organisational skills',d:'The ability to plan and structure tasks effectively'},
+ {w:'Patience',d:'The capacity to accept delay or difficulty without frustration'}
+];
+
+/* Mission 3 — Real Stories: 3 reading sets (English text + French True/False, ~15 lines each) */
+const M3SETS=[
+ {title:"Lucas's Gap Year",
+  text:`Lucas always dreamed of spending six months travelling through South America, but his parents worried about the cost. A return flight, accommodation and food for six months seemed impossible on a student budget.
+
+Instead of giving up, Lucas spent the year before his trip working part-time in a supermarket every weekend. He also created an online fundraising page and explained his project to family friends, who generously contributed small amounts. By the summer, he had saved almost two thousand euros.
+
+Lucas also chose to volunteer on organic farms through a wwoofing programme for part of his trip, which meant free accommodation and meals in exchange for a few hours of work each day. This allowed him to make his budget last much longer than expected.
+
+Looking back, Lucas says that learning to manage money carefully was one of the most valuable lessons of his gap year, almost as valuable as the trip itself.`,
+  vf:[
+   {s:'Lucas voulait voyager en Amérique du Sud pendant six mois.',a:true},
+   {s:'Ses parents ont tout de suite financé son projet sans hésiter.',a:false},
+   {s:"Lucas a travaillé dans un supermarché pour économiser de l'argent.",a:true},
+   {s:"Lucas n'a demandé aucune aide financière à son entourage.",a:false},
+   {s:"Il a réussi à économiser environ deux mille euros.",a:true},
+   {s:'Lucas a fait du wwoofing pendant une partie de son voyage.',a:true},
+   {s:'Le wwoofing lui a coûté très cher en hébergement.',a:false},
+   {s:"Lucas considère que gérer son budget a été une leçon importante.",a:true}
+  ]},
+ {title:"Emma's Journey",
+  text:`Emma left France to volunteer in a small school in Vietnam for four months. She was excited about the project, but she had never been away from her family for so long before.
+
+During her first weeks, Emma often felt homesick, especially in the evenings when she thought about her family and friends back home. She missed familiar food, her own language, and the comfort of her daily routine.
+
+To cope with these feelings, Emma started writing a daily journal and called her parents once a week using a video app. She also became close to another volunteer from Germany, which helped her feel less alone. Slowly, she began to enjoy her new daily life and the children she was teaching.
+
+By the end of her stay, Emma felt proud of having managed her homesickness and said the experience had made her much more independent.`,
+  vf:[
+   {s:'Emma est partie faire du bénévolat au Vietnam.',a:true},
+   {s:'Elle était déjà partie très longtemps loin de sa famille auparavant.',a:false},
+   {s:"Emma n'a jamais ressenti le mal du pays.",a:false},
+   {s:'Elle appelait ses parents une fois par semaine.',a:true},
+   {s:"Emma s'est liée d'amitié avec une autre bénévole allemande.",a:true},
+   {s:'Elle est rentrée en France dès les premières semaines.',a:false},
+   {s:"Emma tenait un journal pour l'aider à gérer ses émotions.",a:true},
+   {s:"À la fin du séjour, Emma se sent plus indépendante.",a:true}
+  ]},
+ {title:"Noah's Decision",
+  text:`Noah wanted to travel alone through Southeast Asia for three months, but his family was very worried about his safety, especially since he had never travelled without an adult before.
+
+To reassure his parents, Noah did careful research before leaving. He booked his first few nights of accommodation in advance, registered his trip with the French embassy, and subscribed to a travel insurance that covered medical emergencies.
+
+He also agreed to share his live location with his parents through an app and to send a short message every evening. During the trip, Noah avoided travelling at night in unfamiliar areas and always kept photocopies of his important documents in a separate bag.
+
+Thanks to this careful preparation, Noah's parents felt much calmer, and Noah himself felt more confident exploring new places on his own.`,
+  vf:[
+   {s:'Noah voulait voyager seul en Asie du Sud-Est.',a:true},
+   {s:'Sa famille était totalement rassurée dès le départ.',a:false},
+   {s:"Noah a souscrit une assurance voyage avant de partir.",a:true},
+   {s:"Il n'a prévenu personne de son itinéraire.",a:false},
+   {s:'Noah partageait sa position en direct avec ses parents.',a:true},
+   {s:"Il gardait des copies de ses documents importants.",a:true},
+   {s:'Noah voyageait souvent de nuit dans des zones inconnues.',a:false},
+   {s:'Grâce à sa préparation, ses parents se sont sentis plus calmes.',a:true}
+  ]}
+];
+
+/* Mission 4 — Convince Them: 3 oral situation cards (solo, one per attempt) */
+const SIT=[
+ {e:'🍽️',t:'Situation — The Worried Parent',w:'Home — Kitchen table, after dinner',
+  who:'Your parent thinks a gap year is a waste of time. They are worried about the cost of the trip and about your safety if you travel alone.',
+  r:"You. Stay calm, listen, and explain your motivations, your budget plan and your safety precautions.",
+  h:'💡 Mots-clés SEULEMENT (max 8) — ex. gap year / budget / save money / safe / plan / experience / promise / trust'},
+ {e:'🏫',t:'Situation — The Skeptical Counselor',w:"School — Counselor's office",
+  who:'Your school counselor thinks you should go straight to higher education. They fear you will lose motivation and forget what you learned at school.',
+  r:'You. Explain your motivations and how the gap year fits into your career plan.',
+  h:'💡 Mots-clés SEULEMENT (max 8) — ex. career plan / skills / come back / motivated / experience / goal / return to studies'},
+ {e:'☕',t:'Situation — The Doubtful Friend',w:'Coffee shop, Saturday afternoon',
+  who:"Your friend thinks a gap year is just an excuse to avoid working and doesn't understand the point of your project.",
+  r:'You. Explain the benefits you expect and what you hope to gain from the experience.',
+  h:'💡 Mots-clés SEULEMENT (max 8) — ex. discover / learn / independence / skills / grow / not lazy / real project'}
+];
+
+/* Mission 6 — video listening comprehension (mix Vrai/Faux + QCM, 12 questions) */
+/* Vidéo : reportage TV (news) sur l'année de césure de Malia Obama avant Harvard — contenu confirmé via la retranscription fournie par l'enseignante. */
+const VIDEO_ID='__B434GdzVg';
+const M6Q=[
+ {type:'vf',s:'Malia Obama decided to take a gap year before starting university.',a:true},
+ {type:'qcm',q:'Which university was Malia Obama going to attend after her gap year?',o:['Yale','Harvard','Stanford','Princeton'],c:1},
+ {type:'vf',s:'According to the report, Malia Obama wants to become a lawyer.',a:false},
+ {type:'qcm',q:'What does Malia Obama want to become, according to the First Lady?',o:['A filmmaker','A doctor','A politician','A teacher'],c:0},
+ {type:'vf',s:'Harvard and other universities discourage admitted students from taking a gap year.',a:false},
+ {type:'qcm',q:'According to the video, what do Harvard and other schools encourage admitted students to do?',o:['Start immediately with no delay','Defer for one year to travel or do a meaningful project','Change university','Repeat their final year of high school'],c:1},
+ {type:'vf',s:'Some students take a gap year to help their family financially.',a:true},
+ {type:'qcm',q:'Why do some students take a gap year, according to the report?',o:['To avoid ever going to college','To earn money and help pay for college','Because it is compulsory','To skip their final exams'],c:1},
+ {type:'vf',s:'During her gap year, Malia Obama worked as an intern on a CBS show.',a:true},
+ {type:'qcm',q:'According to the reporter, what are internships and travel described as?',o:['A waste of time','Marvelous ways to learn outside the classroom','Only for rich students','Less useful than school'],c:1},
+ {type:'vf',s:'One person interviewed, Morris, has no regrets at all about her gap year.',a:false},
+ {type:'qcm',q:'What does Morris regret about her gap year?',o:['Travelling too much','Being a "couch potato" (staying inactive)','Working too many internships','Spending too much time studying'],c:1}
+];
+
+/* ═══════════════════════════ STATE & UTILS ═══════════════════════════ */
+let S={
+  scr:'home',tc:'0504',sc:'GAPYEAR2026',
+  id:'',pts:0,
+  sh:[],rv:[],res:{},wr:[],
+  t0:null,t1:null,
+  att:{m1:1,m2:1,m3:1,m4:1,m5:1,m6:1},
+  sets1:[],sets2:[],sets5:[],
+  m7:{text:''}
+};
+let E={};let F={};
+const LS_PREFIX='gymg_progress_';
+function idKey(id){return LS_PREFIX+(id||'').trim().toUpperCase();}
+function saveProgress(){
+  if(!S.id||!S.t0)return;
+  try{localStorage.setItem(idKey(S.id),JSON.stringify(S));}catch(e){}
+}
+function loadProgress(id){
+  try{
+    const raw=localStorage.getItem(idKey(id));
+    if(!raw)return null;
+    const parsed=JSON.parse(raw);
+    return parsed&&parsed.t0?parsed:null;
+  }catch(e){return null;}
+}
+const shuf=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;};
+const ftm=(s,e)=>{if(!s||!e)return'—';const d=Math.round((e-s)/1e3);return`${0|d/60}min ${d%60}s`;};
+function starRating(n,t){const p=t?n/t:0;if(p>=.9)return{s:3,msg:'Excellent ! 🔥',c:'#B8892B'};if(p>=.8)return{s:2,msg:'Bien joué ! 👍',c:'#1F3B4D'};if(p>=.6)return{s:1,msg:'Peut mieux faire',c:'#B5451B'};return{s:0,msg:'Courage, continuez ! 💪',c:'#B5301F'};}
+function stars(n){return'<span class="stars">'+'★'.repeat(n)+'<span style="opacity:.25">'+'★'.repeat(3-n)+'</span></span>';}
+function wc(str){return (str.trim().match(/\S+/g)||[]).length;}
+
+function buildQCMSet(items){
+  return items.map((item,idx)=>{
+    const others=items.filter((_,j)=>j!==idx);
+    const distractors=shuf(others).slice(0,3).map(x=>x.d);
+    const opts=shuf([item.d,...distractors]);
+    return{q:`What does "${item.w}" mean?`,o:opts,c:opts.indexOf(item.d)};
+  });
+}
+
+/* ═══════════════════════════ UI ATOMS ═══════════════════════════ */
+const btn=(t,fn,c='navy',extra='')=>`<button class="btn btn-${c} ${extra}" onclick="${fn}">${t}</button>`;
+function hdr(lvl){
+  const ls=[['📝','Vocab'],['🧩','Options'],['📖','Récit'],['💬','Oral'],['🎒','Skills'],['🎬','Vidéo']];
+  const dots=ls.map(([e,l],i)=>`${i>0?`<div class="prg-line"></div>`:''}
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+      <div class="prg-dot ${i+1<lvl?'prg-done':i+1===lvl?'prg-active':'prg-future'}">${i+1<lvl?'✓':e}</div>
+      <div class="prg-lbl">${l}</div>
+    </div>`).join('');
+  return `<div class="hdr noprint"><div class="hdr-in"><div class="prg">${dots}</div></div></div>`;
+}
+function lvlIntro(e,t,sub,desc,fn,col='navy'){
+  return `<div class="card card-${col==='navy'?'navy':col==='stamp'?'stamp':'gold'} fadein"><div class="tape"></div><div style="text-align:center;margin-bottom:18px"><div style="font-size:2.6rem">${e}</div><h2 class="pop" style="color:var(--${col});font-size:1.4rem;margin-top:5px">${t}</h2><p style="color:var(--stamp);font-weight:700;font-size:.83rem;margin-top:4px">${sub}</p></div><div style="background:#FFFCF4;border-radius:6px;padding:14px;margin-bottom:18px;font-size:.9rem;color:#444;line-height:1.7;border:1px dashed var(--kraftln)">${desc}</div><div style="text-align:center">${btn("Lancer la mission 🧭",fn,col,'lg')}</div></div>`;
+}
+function indiceScreen(mission,onNext){
+  const w=S.wordFor[mission];
+  if(w&&!S.rv.includes(w))S.rv.push(w);
+  const filled=S.rv.map(x=>`<div style="background:rgba(255,255,255,.16);border:2px dashed rgba(255,255,255,.5);color:#fff;padding:7px 18px;border-radius:4px;font-family:'Special Elite';font-weight:400;font-size:1rem;display:inline-block;margin:3px">${x}</div>`).join('');
+  return `<div class="ibx fadein" style="margin-bottom:14px"><div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.7);margin-bottom:7px;font-family:'Special Elite'">Mot secret découvert</div><div class="iwd">${w}</div><div style="color:rgba(255,255,255,.7);font-size:.8rem;margin-top:9px">📝 Notez ce mot ! Les 6 forment une phrase.</div></div>
+  <div class="card"><div class="pop" style="color:var(--navy);margin-bottom:10px;font-size:.95rem">🧭 Carnet de route (${S.rv.length}/6)</div><div style="margin-bottom:10px">${filled}</div><p style="color:#A9976D;font-size:.78rem">Les fragments sont dans le désordre !</p></div>
+  <div style="text-align:center;margin-top:10px">${btn('Mission suivante →',onNext,'stamp','lg')}</div>`;
+}
+function profFab(){
+  if(S.scr==='home'||S.scr==='tlg'||S.scr==='tdb')return'';
+  return `<div class="prof-fab noprint">${btn('👔 Espace Prof',"go('tlg')",'gray','sm')}</div>`;
+}
+function scoreBadge(){
+  const hiddenScreens=['home','tlg','tdb'];
+  if(hiddenScreens.includes(S.scr))return'';
+  return `<div class="score-fab noprint">🧭 ${S.pts} pts</div>`;
+}
+function reportFab(){
+  const hiddenScreens=['home','tlg','tdb','rules','slg','ident','rep'];
+  if(hiddenScreens.includes(S.scr)||!S.t0)return'';
+  return `<div class="rep-fab noprint">${btn('📥 Ma progression',"S._returnTo=S.scr;S._returnE=E;go('rep')",'gray','sm')}</div>`;
+}
+
+/* ═══════════════════════════ HOME ═══════════════════════════ */
+function vHome(){
+  return `<div style="min-height:100vh;display:flex;flex-direction:column">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:28px 18px">
+    <div style="text-align:center;max-width:520px">
+      <div style="font-size:1.7rem;margin-bottom:4px;animation:float 3.4s ease-in-out infinite;display:inline-block">🧭</div>
+      <h1 class="pop" style="font-size:1.7rem;color:var(--navy);margin-bottom:5px">Around the World</h1>
+      <div style="color:var(--stamp);font-weight:700;font-size:1rem;margin-bottom:5px;font-family:'Special Elite'">GAP YEAR MISSION</div>
+      <p style="color:#7A6B4D;font-size:.87rem;margin-bottom:30px">English Escape Game — Bac Pro, toutes filières</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <div class="card" style="flex:1;min-width:170px;max-width:215px;text-align:center;border-top:3px solid var(--navy)">
+          <div style="font-size:2rem;margin-bottom:8px">🎒</div>
+          <div class="pop" style="color:var(--navy);margin-bottom:4px;font-size:1rem">Élève</div>
+          <div style="color:#7A6B4D;font-size:.8rem;margin-bottom:15px">Rejoindre la mission</div>
+          ${btn("C'est parti ! →","go('rules')",'navy','full')}
+        </div>
+        <div class="card" style="flex:1;min-width:170px;max-width:215px;text-align:center;border-top:3px solid var(--stamp)">
+          <div style="font-size:2rem;margin-bottom:8px">👔</div>
+          <div class="pop" style="color:var(--stamp);margin-bottom:4px;font-size:1rem">Professeur</div>
+          <div style="color:#7A6B4D;font-size:.8rem;margin-bottom:15px">Gérer le jeu</div>
+          ${btn('Accès prof 🔑',"go('tlg')",'stamp','full')}
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer style="text-align:center;padding:14px;color:#A9976D;font-size:.78rem;border-top:1px solid var(--kraftln)">
+    Créé par <strong style="color:var(--navy)">C. Iemfre</strong> &nbsp;|&nbsp;
+    <span style="color:var(--stamp);cursor:pointer;font-weight:700" onclick="go('rgpd')">🔒 RGPD</span>
+  </footer></div>`;
+}
+
+/* ═══════════════════════════ RULES PAGE ═══════════════════════════ */
+function vRules(){
+  const missions=[
+    {n:1,e:'📝',t:'Why a Gap Year?',d:'QCM vocabulaire — objectifs et motivations d\u2019un gap year.',c:'var(--navy)'},
+    {n:2,e:'🧩',t:'Gap Year Options',d:'Correspondance FR/EN — les différents types de missions (voyage, bénévolat, stage...).',c:'var(--stamp)'},
+    {n:3,e:'📖',t:'Real Stories',d:'Compréhension écrite — un témoignage, exercice vrai/faux sur les freins rencontrés.',c:'var(--gold)'},
+    {n:4,e:'💬',t:'Convince Them',d:'Expression orale — défendez votre projet de gap year face à un interlocuteur sceptique.',c:'var(--navy)'},
+    {n:5,e:'🎒',t:'Skills Gained',d:'Correspondance mot/définition en anglais — les compétences développées.',c:'var(--stamp)'},
+    {n:6,e:'🎬',t:'Watch & Understand',d:'Compréhension orale — vidéo suivie de 12 questions (vrai/faux et QCM).',c:'var(--gold)'}
+  ];
+  return `<div style="min-height:100vh;padding-bottom:30px">
+  <div style="background:var(--navy);padding:28px 20px;text-align:center;color:#fff">
+    <div style="font-size:2.3rem;margin-bottom:6px">🧭</div>
+    <h1 class="pop" style="font-size:1.6rem;margin-bottom:5px">Mission Briefing</h1>
+    <div style="font-size:.88rem;opacity:.85">Around the World: Gap Year Mission • English Escape Game</div>
+  </div>
+  <div class="page">
+    <div class="card" style="border-left:4px solid var(--gold);margin-top:4px">
+      <div class="pop" style="color:var(--gold);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">🎒 Contexte de mission</div>
+      <p style="color:#444;font-size:.9rem;line-height:1.75">Vous envisagez de faire une <strong>année de césure</strong>. Motivations, choix du projet, freins à surmonter, compétences à développer... Complétez les 6 missions pour récolter les <strong>6 mots secrets</strong> de votre carnet de route. Recomposez la phrase pour valider le Master Code, puis rédigez un email final pour clore votre carnet de voyage.</p>
+    </div>
+    <div class="pop" style="color:var(--navy);margin:18px 0 10px;font-size:.95rem">🗺️ Les 6 missions</div>
+    <div style="display:grid;gap:9px;margin-bottom:18px">
+      ${missions.map(m=>`<div class="card" style="display:flex;align-items:flex-start;gap:13px;padding:14px 18px;border-left:4px solid ${m.c}">
+        <div style="width:36px;height:36px;border-radius:50%;background:${m.c};color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0">${m.e}</div>
+        <div><div style="font-weight:700;font-size:.9rem;color:#333">Mission ${m.n} — ${m.t}</div><div style="color:#7A6B4D;font-size:.8rem;margin-top:3px;line-height:1.5">${m.d}</div></div>
+      </div>`).join('')}
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <div class="pop" style="color:var(--gold);margin-bottom:12px;font-size:.95rem">📐 Règles du jeu</div>
+      <div style="display:grid;gap:8px;font-size:.87rem">
+        ${[['🧭 Points','<strong>+50 pts</strong> si réussi dès la 1ère tentative (≥80% ou ≥9/10 à l\u2019oral).'],
+           ['🔁 3 tentatives','Score insuffisant ? Vous retentez avec un <strong>nouveau contenu</strong>. Aucune mission ne bloque la partie.'],
+           ['💬 Oral','Mission 4 : le professeur donne une <strong>note sur 10</strong> que vous saisissez vous-même.'],
+           ['🧩 Code secret','6 fragments révélés dans le désordre. Recomposez la phrase pour gagner.'],
+           ['✍️ Email final','Après le code, rédigez un email en anglais (120 mots minimum) reprenant les informations essentielles.'],
+           ['📥 Progression','Bouton flottant disponible à tout moment : PDF avec score, missions faites, réponses/corrections détaillées.'],
+           ['💾 Sauvegarde locale','La progression est enregistrée automatiquement sur l\u2019appareil, sous votre identifiant. Vous pouvez reprendre sur plusieurs séances en ressaisissant le même identifiant (sur le même appareil).']
+        ].map(([k,v])=>`<div style="display:flex;gap:10px;background:#FFFCF4;padding:10px 12px;border-radius:5px;align-items:flex-start;border:1px dashed var(--kraftln)"><span style="flex-shrink:0;font-size:1rem">${k.split(' ')[0]}</span><span><strong>${k.split(' ').slice(1).join(' ')} :</strong> <span style="color:#555">${v}</span></span></div>`).join('')}
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:18px">
+      ${btn('✅ Accepter la mission',"go('slg')",'navy','lg')}
+      <div style="margin-top:10px">${btn('← Retour',"go('home')",'gray','sm')}</div>
+    </div>
+  </div></div>`;
+}
+
+/* ═══════════════════════════ LOGIN ═══════════════════════════ */
+function vLogin(title,next){
+  const isT=next==='tdb';
+  return `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div class="card fadein" style="max-width:380px;width:100%;border-top:4px solid ${isT?'var(--stamp)':'var(--navy)'}">
+    <div style="color:#A9976D;cursor:pointer;font-size:.83rem;margin-bottom:14px" onclick="go('home')">← Accueil</div>
+    <div style="text-align:center;margin-bottom:20px"><div style="font-size:2.3rem">${isT?'👔':'🎒'}</div>
+      <h2 class="pop" style="color:${isT?'var(--stamp)':'var(--navy)'};font-size:1.3rem;margin-top:6px">${title}</h2>
+    </div>
+    <input id="lgc" type="password" placeholder="Entrez le code d'accès" style="margin-bottom:9px" onkeydown="if(event.key==='Enter')doLogin('${next}')">
+    <div id="lge" style="color:var(--red);font-weight:700;font-size:.83rem;min-height:17px;margin-bottom:8px"></div>
+    ${btn('Accéder →',`doLogin('${next}')`,'navy','full')}
+  </div></div>`;
+}
+function doLogin(next){
+  const v=(document.getElementById('lgc')||{}).value||'';
+  if(v.toUpperCase()===(next==='tdb'?S.tc:S.sc.toUpperCase()))go(next);
+  else{const e=document.getElementById('lge');if(e)e.textContent='Code incorrect. Réessayez.';}
+}
+
+/* ═══════════════════════════ TEACHER ═══════════════════════════ */
+function vTeacher(){
+  return `<div style="min-height:100vh;padding:20px"><div style="max-width:700px;margin:0 auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-top:6px">
+    <h2 class="pop" style="color:var(--stamp);font-size:1.3rem">👔 Interface Professeur</h2>
+    ${btn('← Accueil',"go('home')",'gray','sm')}
+  </div>
+  <div class="card card-stamp"><div class="pop" style="color:var(--stamp);margin-bottom:11px;font-size:.95rem">🔑 Code d'accès élèves</div>
+    <p style="color:#7A6B4D;font-size:.87rem;margin-bottom:5px">Code fixé pour ce jeu : <strong style="color:var(--stamp);font-family:'Special Elite';font-size:1.1rem">${S.sc}</strong></p>
+    <p style="color:#A9976D;font-size:.78rem">Communiquez ce code à vos élèves avant de lancer le jeu. Votre code professeur (0504) reste le même pour tous les jeux.</p>
+  </div>
+  <div class="card card-navy"><div class="pop" style="color:var(--navy);margin-bottom:12px;font-size:.95rem">📋 Récapitulatif du jeu</div>
+    ${[['Mode de jeu','Individuel — chaque élève joue seul avec son identifiant XX-YY (2 lettres prénom + 2 lettres nom)'],
+       ['Master Code final','THIS TRIP CHANGED MY LIFE FOREVER (fragments révélés dans le désordre, un par mission)'],
+       ['Système de points (écrit)','+50 pts tentative 1 réussie (≥80%) • +30 pts tentative 2 (≥70%) • tentative 3 toujours validée, points proportionnels'],
+       ['Pénalités','−10 pts si tentative 1 échouée • −15 pts si tentative 2 échouée'],
+       ['Non-blocage','Aucune mission ne bloque la partie : après 3 tentatives, l\u2019élève avance quoi qu\u2019il arrive'],
+       ['Mission orale (4)','Vous annoncez une note orale sur 10 ; l\u2019élève la saisit directement dans son interface. ≥9/10 = réussi ; sinon nouvelle tentative (≥8/10 en tentative 2)'],
+       ['Mission 6 — vidéo','Reportage TV sur l\u2019année de césure de Malia Obama avant Harvard (lien YouTube intégré), suivi de 12 questions Vrai/Faux et QCM basées sur son contenu'],
+       ['Étape finale — email','Rédaction EN ANGLAIS, 120 mots minimum, reprenant les informations essentielles du parcours (compte rendu individuel, inclus dans le PDF)']
+    ].map(([k,v])=>`<div style="background:#FFFCF4;padding:10px 13px;border-radius:5px;margin-bottom:8px;font-size:.86rem;border:1px dashed var(--kraftln)"><strong style="color:var(--navy)">${k} :</strong> <span style="color:#555">${v}</span></div>`).join('')}
+  </div>
+  <div class="card card-stamp"><div class="pop" style="color:var(--stamp);margin-bottom:12px;font-size:.95rem">🎓 Critère d'évaluation orale</div>
+    <div style="background:var(--sl);padding:11px 13px;border-radius:5px;border:1px solid var(--stamp2);font-size:.86rem"><strong style="color:var(--stamp)">Mission 4 — Convince Them :</strong> <span style="color:#555">Argumentation claire, réponse adaptée à l'interlocuteur, mots-clés pertinents (pas de phrases apprises par cœur).</span></div>
+  </div></div></div>`;
+}
+
+/* ═══════════════════════════ IDENTIFICATION (mode individuel) ═══════════════════════════ */
+function vIdent(){
+  const fn=(F.fn||'').slice(0,2),ln=(F.ln||'').slice(0,2);
+  return `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+  <div class="card fadein" style="max-width:420px;width:100%;border-top:4px solid var(--navy)">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:2.3rem">🎒</div>
+      <h2 class="pop" style="color:var(--navy);font-size:1.25rem;margin-top:6px">Votre identifiant</h2>
+      <p style="color:#7A6B4D;font-size:.82rem;margin-top:3px">Jeu individuel — un identifiant par élève</p>
+    </div>
+    <label style="font-weight:700;display:block;margin-bottom:6px;font-size:.85rem;color:#444">2 premières lettres de votre prénom</label>
+    <input id="fn" type="text" placeholder="Ex : JO" maxlength="2" value="${F.fn||''}" oninput="F.fn=this.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,2);render()" style="margin-bottom:9px;text-align:center;font-weight:800;letter-spacing:.12em">
+    <label style="font-weight:700;display:block;margin-bottom:6px;font-size:.85rem;color:#444">2 premières lettres de votre nom</label>
+    <input id="ln" type="text" placeholder="Ex : SM" maxlength="2" value="${F.ln||''}" oninput="F.ln=this.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,2);render()" style="margin-bottom:9px;text-align:center;font-weight:800;letter-spacing:.12em">
+    <div style="text-align:center;margin-bottom:10px">${fn&&ln?`<span class="chip">${fn}-${ln}</span>`:'<span style="color:#CFC1A0;font-weight:800">--</span>'}</div>
+    <p style="color:#A9976D;font-size:.74rem;margin-bottom:8px">💾 Reprenez une séance précédente en ressaisissant exactement le même identifiant.</p>
+    <div id="savedBanner" style="margin-bottom:8px">${F._savedBannerHtml||''}</div>
+    <div id="ge" style="color:var(--red);font-weight:700;font-size:.83rem;min-height:17px;margin-bottom:6px"></div>
+    ${btn('🧭 Lancer la mission !','startGame()','navy','full lg')}
+  </div></div>`;
+}
+function checkSavedProgress(){
+  const id=`${(F.fn||'')}-${(F.ln||'')}`;
+  F._forceNew=false;
+  if(!F.fn||!F.ln)return;
+  const saved=loadProgress(id);
+  let html='';
+  if(saved){
+    html=`<div class="ok" style="font-size:.82rem;line-height:1.6">✅ Progression retrouvée pour <strong>${id}</strong> — ${saved.pts} pts. Cliquez sur « Lancer la mission » pour reprendre, ou <span style="text-decoration:underline;cursor:pointer;color:var(--red);font-weight:700" onclick="forceNewGame()">recommencer à zéro</span>.</div>`;
+  }
+  F._savedBannerHtml=html;
+}
+function forceNewGame(){
+  F._forceNew=true;
+  F._savedBannerHtml=`<div class="ko" style="font-size:.82rem">🔄 Une nouvelle partie sera démarrée (l'ancienne progression sera remplacée).</div>`;
+  render();
+}
+function startGame(){
+  if(!F.fn||!F.ln){const e=document.getElementById('ge');if(e)e.textContent='Renseignez vos deux initiales';return;}
+  const id=`${F.fn}-${F.ln}`;
+  checkSavedProgress();
+  if(!F._forceNew){
+    const saved=loadProgress(id);
+    if(saved){S=saved;F={};go(S.scr||'m1i');return;}
+  }
+  S.sh=shuf(WW);S.wordFor={m1:S.sh[0],m2:S.sh[1],m3:S.sh[2],m4:S.sh[3],m5:S.sh[4],m6:S.sh[5]};S.rv=[];S.res={};S.wr=[];S.pts=0;
+  S.id=id;S.t0=Date.now();S.t1=null;
+  S.att={m1:1,m2:1,m3:1,m4:1,m5:1,m6:1};
+  {const shp=shuf(POOL1);S.sets1=[shp.slice(0,10),shp.slice(0,10),shp.slice(0,10)];}
+  {const shp2=shuf(POOL2);S.sets2=[shp2.slice(0,10),shp2.slice(10,20),shuf(shp2).slice(0,10)];}
+  {const shp5=shuf(POOL5);S.sets5=[shp5.slice(0,10),shp5.slice(10,20),shuf(shp5).slice(0,10)];}
+  S.m7={text:''};
+  F={};
+  go('m1i');
+}
+
+/* ═══════════════════════════ WRITTEN EXERCISES (QCM / VF / MATCH) ═══════════════════════════ */
+function startWritten(mission,kind){
+  S.att[mission]=1;
+  goWrittenAttempt(mission,kind,0);
+}
+function goWrittenAttempt(mission,kind,attIdx,banner){
+  if(kind==='qcm'){
+    const qs=buildQCMSet(S.sets1[attIdx]);
+    go('wex',{mission,kind,qs,cur:0,ans:{},done:false,_banner:banner});
+  }else if(kind==='vf'){
+    const set=M3SETS[attIdx];
+    go('wex',{mission,kind,qs:set.vf,text:set.text,title:set.title,cur:0,ans:{},done:false,_banner:banner});
+  }else if(kind==='match2'){
+    const ps=S.sets2[attIdx];
+    go('wex',{mission,kind,ps,sh:shuf(ps.map((_,i)=>i)),sel:null,mt:{},done:false,_banner:banner});
+  }else if(kind==='match5'){
+    const ps=S.sets5[attIdx];
+    go('wex',{mission,kind,ps,sh:shuf(ps.map((_,i)=>i)),sel:null,mt:{},done:false,_banner:banner});
+  }
+}
+function resolveWritten(mission,kind,score,total,wrongItems,detail){
+  const att=S.att[mission];
+  let passed,ptsDelta;
+  if(att===1){passed=score>=Math.ceil(total*0.8);ptsDelta=passed?50:-10;}
+  else if(att===2){passed=score>=Math.ceil(total*0.7);ptsDelta=passed?30:-15;}
+  else{passed=score>=Math.ceil(total*0.5);ptsDelta=Math.round(score/total*20);}
+  S.pts=S.pts+ptsDelta;
+  S.res[mission+'-t'+att]={score,total,success:passed,pts:ptsDelta,detail};
+  if(!passed)S.wr.push(...wrongItems);
+  if(passed||att===3){
+    goMissionDone(mission);
+  }else{
+    S.att[mission]=att+1;
+    goWrittenAttempt(mission,kind,att);
+  }
+}
+function goMissionDone(mission){
+  if(mission==='m1')go('m1d');
+  else if(mission==='m2')go('m2d');
+  else if(mission==='m3')go('m3d');
+  else if(mission==='m5')go('m5d');
+  else if(mission==='m6')go('m6d');
+}
+
+/* ── QCM renderer ── */
+function vQCM(){
+  const{qs,cur=0,ans={},done=false}=E;
+  if(!qs)return'';
+  const q=qs[cur];const L='ABCD';const CC=['var(--navy)','var(--stamp)','var(--gold)','#5C3A6B'];
+  const dots=qs.map((_,i)=>{const c=done?(ans[i]===qs[i].c?'var(--green)':'var(--red)'):(ans[i]!=null?'var(--navy)':'#DDD');return`<div onclick="E.cur=${i};render()" style="width:9px;height:9px;border-radius:50%;background:${c};cursor:pointer;display:inline-block;margin:2px"></div>`;}).join('');
+  const opts=q.o.map((opt,oi)=>{
+    let bc='var(--kraftln)',bg='#FFFCF4';
+    if(ans[cur]===oi){bc='var(--navy)';bg='#E3EDF1';}
+    if(done&&oi===q.c){bc='var(--green)';bg='#E9F3EA';}
+    if(done&&ans[cur]===oi&&oi!==q.c){bc='var(--red)';bg='#F8E6E2';}
+    const lbg=ans[cur]===oi?CC[oi]:'#F0E9D4',lc=ans[cur]===oi?'#fff':'#8A7A56';
+    const mk=done?(oi===q.c?' ✓':(ans[cur]===oi?' ✗':'')):'';
+    return`<div class="opt ${ans[cur]===oi?'sel':''} ${done&&oi===q.c?'right':''} ${done&&ans[cur]===oi&&oi!==q.c?'wrong':''}" onclick="${done?'':(`E.ans[${cur}]=${oi};render()`)}" style="border-color:${bc};background:${bg}">
+      <div class="let" style="background:${lbg};color:${lc}">${L[oi]}</div>
+      <span style="flex:1">${opt}</span><span style="font-weight:800;color:${done&&oi===q.c?'var(--green)':'var(--red)'}">${mk}</span>
+    </div>`;
+  }).join('');
+  const allA=Object.keys(ans).length===qs.length;
+  const score=qs.filter((_,i)=>ans[i]===qs[i].c).length;
+  const bot=done
+    ?`<div style="display:flex;gap:8px;width:100%;margin-top:4px"><div class="ok" style="flex:1;margin:0">${score}/${qs.length} bonnes réponses</div>${btn('Continuer →','wexDone()','stamp')}</div>`
+    :(allA?btn('✅ Valider mes réponses','E.done=true;render()','navy'):`<small style="color:#CFC1A0;font-size:.78rem">${Object.keys(ans).length}/${qs.length} répondues</small>`);
+  return`<div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+      <span style="color:#A9976D;font-size:.8rem;font-weight:700">Question ${cur+1} / ${qs.length}</span><div>${dots}</div>
+    </div>
+    <div style="background:var(--nl);border-radius:6px;padding:13px;margin-bottom:12px;font-weight:600;font-size:.9rem;line-height:1.5;color:#333">${q.q}</div>
+    ${opts}
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:space-between;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;gap:6px">
+        ${cur>0?btn('← Préc.',`E.cur=${cur-1};render()`,'gray','sm'):''}
+        ${cur<qs.length-1?btn('Suiv. →',`E.cur=${cur+1};render()`,'navy','sm'):''}
+      </div>${bot}
+    </div>
+  </div>`;
+}
+/* ── V/F renderer ── */
+function vVF(){
+  const{qs,text,title,ans={},done=false}=E;if(!qs)return'';
+  const score=qs.filter((q,i)=>ans[i]===q.a).length;
+  const rows=qs.map((q,i)=>{
+    const bg=done?(ans[i]===q.a?'#E9F3EA':'#F8E6E2'):'#FFFCF4';
+    const bc=done?(ans[i]===q.a?'var(--green)':'var(--red)'):'var(--kraftln)';
+    return`<div class="vfr" style="background:${bg};border-color:${bc}">
+      <span style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:#fff;flex-shrink:0">${i+1}</span>
+      <span style="flex:1;font-weight:600;font-size:.86rem;line-height:1.4">${q.s}</span>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button class="tvf" onclick="${done?'':(`E.ans[${i}]=true;render()`)}" style="border-color:var(--green);color:${ans[i]===true?'#fff':'var(--green)'};background:${ans[i]===true?'var(--green)':'#fff'}">VRAI</button>
+        <button class="tvf" onclick="${done?'':(`E.ans[${i}]=false;render()`)}" style="border-color:var(--red);color:${ans[i]===false?'#fff':'var(--red)'};background:${ans[i]===false?'var(--red)':'#fff'}">FAUX</button>
+      </div>
+      ${done?`<span style="font-weight:800;color:${ans[i]===q.a?'var(--green)':'var(--red)'}">${ans[i]===q.a?'✓':'✗'}</span>`:''}
+    </div>`;
+  }).join('');
+  const allA=Object.keys(ans).length===qs.length;
+  const bot=done
+    ?`<div style="display:flex;gap:8px;width:100%"><div class="ok" style="flex:1;margin:0">${score}/${qs.length} bonnes réponses</div>${btn('Continuer →','wexDone()','stamp')}</div>`
+    :btn('✅ Valider',`E.done=true;render()`,'navy','',!allA);
+  return`<div class="rtxt"><strong style="color:var(--navy2);font-size:.8rem">📖 ${title}</strong><br><br>${text.replace(/\n\n/g,'<br><br>')}</div>${rows}<div style="margin-top:12px;display:flex;justify-content:flex-end">${bot}</div>`;
+}
+/* ── Matching renderer (generic, used by M2 and M5) ── */
+function vMatch(){
+  const{ps,sh,sel,mt={},done=false}=E;if(!ps)return'';
+  const used=Object.values(mt);
+  const words=ps.map((p,i)=>{
+    const isM=mt[i]!=null,ok=done&&mt[i]===i,ko=done&&isM&&mt[i]!==i;
+    return`<div class="mi${sel===i?' msel':''}${isM&&!done?' mu':''}${ok?' mok':''}${ko?' mko':''}" onclick="${done||isM?'':(`selW(${i})`)}">
+      <strong style="flex:1">${p.w}</strong>
+      ${isM&&!done?'<span style="color:var(--stamp);font-size:.72rem">✓</span>':''}
+      ${ok?'<span style="color:var(--green)">✓</span>':''}${ko?'<span style="color:var(--red)">✗</span>':''}
+    </div>`;
+  }).join('');
+  const defs=sh.map(orig=>{
+    const isU=used.includes(orig);
+    const mKey=Object.keys(mt).find(k=>mt[k]===orig);
+    const ok=done&&mKey!=null&&Number(mKey)===orig;
+    const ko=done&&isU&&!ok;
+    return`<div class="mi${isU&&!done?' mu':''}${ok?' mok':''}${ko?' mko':''}" onclick="${isU?'':(`selD(${orig})`)}">${ps[orig].d}</div>`;
+  }).join('');
+  const allM=Object.keys(mt).length===ps.length;
+  const score=ps.filter((_,i)=>mt[i]===i).length;
+  const bot=done
+    ?`<div style="display:flex;gap:8px;width:100%"><div class="ok" style="flex:1;margin:0">${score}/${ps.length} bonnes réponses</div>${btn('Continuer →','wexDone()','stamp')}</div>`
+    :(allM?btn('✅ Valider','E.done=true;render()','navy'):`<small style="color:#CFC1A0;font-size:.78rem">${Object.keys(mt).length}/${ps.length} associés</small>`);
+  return`<div class="hint" style="margin-bottom:12px">⚠️ Aucun retour en arrière possible : lisez bien avant de valider chaque association !</div><p style="color:#A9976D;font-size:.8rem;margin-bottom:10px;font-weight:700">① Cliquez un terme → ② Cliquez sa correspondance</p>
+  <div class="mg"><div><div style="font-weight:800;color:var(--stamp);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Termes</div>${words}</div>
+  <div><div style="font-weight:800;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Correspondances</div>${defs}</div></div>
+  <div style="margin-top:13px;display:flex;justify-content:flex-end">${bot}</div>`;
+}
+function selW(i){if(E.done||E.mt[i]!=null)return;E.sel=E.sel===i?null:i;render();}
+function selD(orig){if(E.done||Object.values(E.mt||{}).includes(orig)||E.sel==null)return;if(!E.mt)E.mt={};E.mt[E.sel]=orig;E.sel=null;render();}
+
+function wexDone(){
+  const{mission,kind,qs,ps,ans={},mt={}}=E;
+  if(kind==='qcm'){
+    const score=qs.filter((_,i)=>ans[i]===qs[i].c).length;
+    const detail=qs.map((q,i)=>({question:q.q,given:ans[i]!=null?q.o[ans[i]]:'—',correct:q.o[q.c],ok:ans[i]===q.c}));
+    const wrong=detail.filter(d=>!d.ok).map(d=>({level:'M1',question:d.question,given:d.given,correct:d.correct}));
+    resolveWritten(mission,kind,score,qs.length,wrong,detail);
+  }else if(kind==='vf'){
+    const score=qs.filter((q,i)=>ans[i]===q.a).length;
+    const detail=qs.map((q,i)=>({question:q.s,given:ans[i]!=null?(ans[i]?'VRAI':'FAUX'):'—',correct:q.a?'VRAI':'FAUX',ok:ans[i]===q.a}));
+    const wrong=detail.filter(d=>!d.ok).map(d=>({level:'M3',question:d.question,given:d.given,correct:d.correct}));
+    resolveWritten(mission,kind,score,qs.length,wrong,detail);
+  }else if(kind==='match2'||kind==='match5'){
+    const score=ps.filter((_,i)=>mt[i]===i).length;
+    const detail=ps.map((p,i)=>({question:`Match : ${p.w}`,given:mt[i]!=null?(ps[mt[i]]?.d||'—'):'—',correct:p.d,ok:mt[i]===i}));
+    const wrong=detail.filter(d=>!d.ok).map(d=>({level:kind==='match2'?'M2':'M5',question:d.question,given:d.given,correct:d.correct}));
+    resolveWritten(mission,kind,score,ps.length,wrong,detail);
+  }
+}
+
+/* ═══════════════════════════ ORAL MISSION (solo) ═══════════════════════════ */
+function startOral(mission){
+  S.att[mission]=1;
+  goOralAttempt(mission,0);
+}
+function goOralAttempt(mission,attIdx,banner){
+  const content=SIT[attIdx];
+  go('oex',{mission,attIdx,content,step:'card',_banner:banner});
+}
+function resolveOral(mission,grade){
+  const att=S.att[mission];
+  let passed,ptsDelta;
+  if(att===1){passed=grade>=9;ptsDelta=passed?50:-10;}
+  else if(att===2){passed=grade>=8;ptsDelta=passed?30:-15;}
+  else{passed=grade>=8;ptsDelta=grade*2;}
+  S.pts=S.pts+ptsDelta;
+  S.res[mission+'-t'+att]={grade,success:passed,pts:ptsDelta,situation:E.content?E.content.t:''};
+  if(passed||att===3){go('m4d');}
+  else{S.att[mission]=att+1;goOralAttempt(mission,att);}
+}
+function vOral(){
+  const{content,step}=E;
+  let body='';
+  if(step==='card'){
+    const inner=`<div class="sit"><div class="slbl">📍 Lieu</div><div class="sval">${content.w}</div><div class="slbl">👤 Contexte</div><div class="sval">${content.who}</div><div class="slbl">🎭 Votre rôle</div><div class="sval">${content.r}</div></div>`;
+    body=`${inner}<div class="hint" style="margin-top:12px;margin-bottom:16px">${content.h}</div>
+    <div style="text-align:center"><p style="color:#7A6B4D;font-size:.86rem;margin-bottom:10px">Lisez attentivement, préparez SEULEMENT des mots-clés (max 8), puis présentez à l'oral.</p>${btn('💬 Je suis prêt(e)',"E.step='presenting';render()",'navy','lg')}</div>`;
+  } else if(step==='presenting'){
+    body=`<div style="background:var(--nl);border:2px dashed var(--navy);border-radius:8px;padding:20px;text-align:center">
+      <div style="font-size:1.8rem;margin-bottom:8px">💬</div>
+      <p style="font-weight:700;color:var(--navy);margin-bottom:14px;font-size:.95rem">${S.id} présente son oral en anglais…</p>
+      <p style="color:#7A6B4D;font-size:.82rem;margin-bottom:16px">Une fois la présentation terminée, le professeur annonce une note à l'oral. Saisissez-la ci-dessous.</p>
+      ${btn('✍️ Saisir la note',"E.step='grade';render()",'stamp','lg')}
+    </div>`;
+  } else if(step==='grade'){
+    body=`<div style="background:var(--sl);border:2px solid var(--stamp);border-radius:8px;padding:22px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:8px">🏆</div>
+      <h3 class="pop" style="color:var(--stamp);margin-bottom:5px;font-size:1.1rem">Note orale</h3>
+      <p style="color:#555;font-size:.88rem;margin-bottom:16px">Saisissez la note sur 10 annoncée par le professeur</p>
+      <input id="gval" type="number" min="0" max="10" placeholder="Note / 10" style="text-align:center;font-size:1.2rem;font-weight:800;margin-bottom:10px">
+      <div id="gerr" style="color:var(--red);font-weight:700;font-size:.82rem;min-height:16px;margin-bottom:8px"></div>
+      ${btn('✅ Valider la note','submitGrade()','stamp','full lg')}
+    </div>`;
+  }
+  return`<div class="card fadein">${E._banner||''}<div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:1.8rem">${content.e}</div>
+    <h3 class="pop" style="color:var(--stamp);font-size:1.1rem;margin-top:4px">${content.t}</h3>
+  </div>${body}</div>`;
+}
+function submitGrade(){
+  const raw=(document.getElementById('gval')||{}).value;
+  const g=Number(raw);
+  if(raw===''||isNaN(g)||g<0||g>10){const e=document.getElementById('gerr');if(e)e.textContent='Entrez une note entre 0 et 10';return;}
+  resolveOral(E.mission,g);
+}
+
+/* ═══════════════════════════ MISSION 6 — VIDEO ═══════════════════════════ */
+function startVideo(){
+  S.att.m6=1;
+  goVideoAttempt(0);
+}
+function goVideoAttempt(banner){
+  go('vex',{qs:shuf(M6Q),ans:{},done:false,_banner:banner});
+}
+function vVideo(){
+  const{qs,ans={},done=false}=E;if(!qs)return'';
+  const score=qs.filter((q,i)=>{const g=ans[i];if(g==null)return false;return q.type==='vf'?g===q.a:g===q.c;}).length;
+  const rows=qs.map((q,i)=>{
+    if(q.type==='vf'){
+      const bg=done?(ans[i]===q.a?'#E9F3EA':'#F8E6E2'):'#FFFCF4';
+      const bc=done?(ans[i]===q.a?'var(--green)':'var(--red)'):'var(--kraftln)';
+      return`<div class="vfr" style="background:${bg};border-color:${bc}">
+        <span style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:#fff;flex-shrink:0">${i+1}</span>
+        <span style="flex:1;font-weight:600;font-size:.85rem;line-height:1.4">${q.s}</span>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button class="tvf" onclick="${done?'':(`E.ans[${i}]=true;render()`)}" style="border-color:var(--green);color:${ans[i]===true?'#fff':'var(--green)'};background:${ans[i]===true?'var(--green)':'#fff'}">TRUE</button>
+          <button class="tvf" onclick="${done?'':(`E.ans[${i}]=false;render()`)}" style="border-color:var(--red);color:${ans[i]===false?'#fff':'var(--red)'};background:${ans[i]===false?'var(--red)':'#fff'}">FALSE</button>
+        </div>
+        ${done?`<span style="font-weight:800;color:${ans[i]===q.a?'var(--green)':'var(--red)'}">${ans[i]===q.a?'✓':'✗'}</span>`:''}
+      </div>`;
+    }
+    const opts=q.o.map((opt,oi)=>{
+      let bc='var(--kraftln)',bg='#FFFCF4';
+      if(ans[i]===oi){bc='var(--navy)';bg='#E3EDF1';}
+      if(done&&oi===q.c){bc='var(--green)';bg='#E9F3EA';}
+      if(done&&ans[i]===oi&&oi!==q.c){bc='var(--red)';bg='#F8E6E2';}
+      return`<div class="opt" onclick="${done?'':(`E.ans[${i}]=${oi};render()`)}" style="border-color:${bc};background:${bg};margin-bottom:5px">
+        <span style="flex:1;font-size:.83rem">${opt}</span>
+        ${done&&oi===q.c?'<span style="color:var(--green);font-weight:800">✓</span>':''}${done&&ans[i]===oi&&oi!==q.c?'<span style="color:var(--red);font-weight:800">✗</span>':''}
+      </div>`;
+    }).join('');
+    return`<div style="margin-bottom:10px;background:#FFFCF4;border:2px solid var(--kraftln);border-radius:6px;padding:11px">
+      <div style="font-weight:600;font-size:.85rem;margin-bottom:7px"><span style="width:20px;height:20px;background:var(--stamp);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:#fff;margin-right:6px">${i+1}</span>${q.q}</div>
+      ${opts}
+    </div>`;
+  }).join('');
+  const allA=Object.keys(ans).length===qs.length;
+  const bot=done
+    ?`<div style="display:flex;gap:8px;width:100%"><div class="ok" style="flex:1;margin:0">${score}/${qs.length} bonnes réponses</div>${btn('Continuer →','videoDone()','stamp')}</div>`
+    :btn('✅ Valider mes réponses',`E.done=true;render()`,'navy','',!allA);
+  return`<div class="card card-gold fadein">${E._banner||''}<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><span style="background:var(--gold);color:#2B2117;padding:3px 12px;border-radius:4px;font-weight:800;font-size:.8rem">Tentative ${S.att.m6}</span><strong style="font-size:.95rem">Watch & Understand</strong></div>
+  <div style="position:relative;padding-bottom:56.25%;height:0;margin-bottom:14px;border-radius:6px;overflow:hidden;border:2px dashed var(--navy)">
+    <iframe src="https://www.youtube.com/embed/${VIDEO_ID}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen title="Gap year video"></iframe>
+  </div>
+  <div class="hint" style="margin-bottom:12px">🎧 Regardez la vidéo (avec le son), puis répondez aux 12 questions ci-dessous.</div>
+  ${rows}
+  <div style="margin-top:12px;display:flex;justify-content:flex-end">${bot}</div></div>`;
+}
+function videoDone(){
+  const{qs,ans={}}=E;
+  const score=qs.filter((q,i)=>{const g=ans[i];if(g==null)return false;return q.type==='vf'?g===q.a:g===q.c;}).length;
+  const detail=qs.map((q,i)=>{
+    const given=ans[i]==null?'—':(q.type==='vf'?(ans[i]?'TRUE':'FALSE'):q.o[ans[i]]);
+    const correct=q.type==='vf'?(q.a?'TRUE':'FALSE'):q.o[q.c];
+    const ok=q.type==='vf'?ans[i]===q.a:ans[i]===q.c;
+    return{question:q.type==='vf'?q.s:q.q,given,correct,ok};
+  });
+  const wrong=detail.filter(d=>!d.ok).map(d=>({level:'M6',question:d.question,given:d.given,correct:d.correct}));
+  resolveWritten('m6','video',score,qs.length,wrong,detail);
+}
+
+/* ═══════════════════════════ FINAL CODE ═══════════════════════════ */
+function vFinal(){
+  const chips=S.rv.map(w=>`<div style="background:var(--navy);color:#fff;padding:7px 18px;border-radius:4px;font-family:'Special Elite';font-weight:400;font-size:1rem;display:inline-block;margin:3px">${w}</div>`).join('');
+  return`<div class="card fadein" style="border-top:4px solid var(--navy)">
+    <div style="text-align:center;margin-bottom:22px"><div style="font-size:2.6rem">🧭</div>
+      <h2 class="pop" style="color:var(--navy);font-size:1.4rem;margin-top:7px">Master Code</h2>
+      <p style="color:#7A6B4D;font-size:.87rem;margin-top:4px">Recomposez la phrase secrète avec vos 6 fragments</p>
+    </div>
+    <div style="background:var(--nl);border-radius:8px;padding:18px;margin-bottom:20px;border:1px dashed var(--navy)">
+      <div class="pop" style="color:var(--navy);margin-bottom:10px;font-size:.88rem">🧭 Vos fragments :</div>
+      <div style="margin-bottom:8px">${chips}</div>
+      <p style="color:#A9976D;font-size:.78rem">⚠️ Ils sont dans le désordre — trouvez la bonne phrase !</p>
+    </div>
+    <label style="font-weight:700;display:block;margin-bottom:7px;font-size:.87rem;color:#444">✍️ Entrez la phrase complète :</label>
+    <input id="fc" type="text" placeholder="_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _" style="font-size:1rem;text-align:center;letter-spacing:.04em;margin-bottom:9px" onkeydown="if(event.key==='Enter')checkFinal()">
+    <div id="fe" style="color:var(--red);font-weight:700;font-size:.83rem;min-height:17px;margin-bottom:10px"></div>
+    <div style="text-align:center">${btn('🔓 Valider mon carnet de route !','checkFinal()','navy','lg')}</div>
+  </div>`;
+}
+function checkFinal(){
+  const v=((document.getElementById('fc')||{}).value||'').trim().toUpperCase().replace(/\s+/g,' ');
+  if(v==='THIS TRIP CHANGED MY LIFE FOREVER'){S.t1=Date.now();go('vic');}
+  else{const e=document.getElementById('fe');if(e)e.textContent=`❌ Code incorrect. Réarrangez vos ${S.rv.length} fragments !`;}
+}
+
+/* ═══════════════════════════ VICTORY ═══════════════════════════ */
+function vVictory(){
+  const dur=ftm(S.t0,S.t1);
+  const r=starRating(S.pts,360);
+  return`<div style="background:var(--navy);border-radius:10px;padding:32px;text-align:center;color:#fff;margin-bottom:18px;border:2px solid #0F232F">
+    <div style="font-size:2.6rem;margin-bottom:8px">🧭🎒🌍</div>
+    <h1 class="pop" style="font-size:1.6rem;margin-bottom:7px">Mission accomplie !</h1>
+    <p style="opacity:.9;margin-bottom:4px">Votre carnet de route est complet ! 🌍</p>
+    <div style="font-family:'Special Elite';font-size:1rem;margin-top:14px;background:rgba(255,255,255,.14);padding:10px 22px;border-radius:4px;display:inline-block">
+      THIS TRIP CHANGED MY LIFE FOREVER ✓
+    </div>
+  </div>
+  <div class="card"><div class="pop" style="color:var(--navy);margin-bottom:14px;font-size:.95rem">📊 Résumé de mission</div>
+    <div style="text-align:center;margin-bottom:14px">${stars(r.s)} <span style="font-weight:700;color:var(--stamp);margin-left:6px">${r.msg}</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="background:var(--nl);padding:14px;border-radius:6px;text-align:center"><div class="pop" style="font-size:1.7rem;color:var(--navy)">${S.pts}</div><div style="color:#7A6B4D;font-size:.8rem">Points</div></div>
+      <div style="background:var(--sl);padding:14px;border-radius:6px;text-align:center"><div class="pop" style="font-size:1.3rem;color:var(--stamp)">${dur}</div><div style="color:#7A6B4D;font-size:.8rem">Durée</div></div>
+    </div>
+    <div style="margin-bottom:16px;text-align:center"><span class="chip">${S.id}</span></div>
+    ${btn('✍️ Étape finale — Rédiger l\u2019email',"go('m7')",'stamp','full lg')}
+  </div>`;
+}
+
+/* ═══════════════════════════ ÉTAPE 7 — EMAIL FINAL ═══════════════════════════ */
+function vM7(){
+  const n=wc(S.m7.text||'');
+  const ok=n>=120;
+  return`<div class="card fadein" style="border-top:4px solid var(--stamp)">
+    <div style="text-align:center;margin-bottom:16px"><div style="font-size:2.3rem">✍️</div>
+      <h2 class="pop" style="color:var(--stamp);font-size:1.25rem;margin-top:6px">Étape finale — Rédiger un email</h2>
+    </div>
+    <p style="color:#555;font-size:.88rem;line-height:1.7;margin-bottom:12px">Consigne : rédigez un email EN ANGLAIS à votre conseiller(ère) d'orientation (<strong>120 mots minimum</strong>) dans lequel vous expliquez :</p>
+    <ul style="color:#555;font-size:.85rem;line-height:1.9;margin:0 0 16px 18px">
+      <li>votre motivation pour faire un gap year ;</li>
+      <li>le type de mission que vous choisiriez (voyage, bénévolat, stage...) ;</li>
+      <li>un frein possible et comment vous comptez le surmonter ;</li>
+      <li>une compétence que vous espérez développer.</li>
+    </ul>
+    <textarea id="m7ta" rows="10" placeholder="Dear ..., I am writing to..." oninput="S.m7.text=this.value;render()">${S.m7.text||''}</textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+      <span style="font-weight:700;font-size:.85rem;color:${ok?'var(--green)':'var(--stamp)'}">${n} / 120 mots minimum</span>
+      ${ok?'<span class="ok" style="padding:5px 12px;font-size:.78rem">✓ Longueur suffisante</span>':''}
+    </div>
+    ${!ok?`<div class="err" style="margin-top:10px">✍️ Il manque ${120-n} mot(s) pour atteindre le minimum requis.</div>`:''}
+    <div style="text-align:center;margin-top:16px">${btn('📥 Valider et voir mon carnet complet',ok?"go('rep')":"void(0)",'navy','lg')}</div>
+  </div>`;
+}
+
+/* ═══════════════════════════ REPORT ═══════════════════════════ */
+function vReport(){
+  const dur=ftm(S.t0,S.t1);
+  const LN={'m1-t1':'📝 Vocab — tentative 1','m1-t2':'📝 Vocab — tentative 2','m1-t3':'📝 Vocab — tentative 3',
+    'm2-t1':'🧩 Options — tentative 1','m2-t2':'🧩 Options — tentative 2','m2-t3':'🧩 Options — tentative 3',
+    'm3-t1':'📖 Récit — tentative 1','m3-t2':'📖 Récit — tentative 2','m3-t3':'📖 Récit — tentative 3',
+    'm4-t1':'💬 Oral — tentative 1','m4-t2':'💬 Oral — tentative 2','m4-t3':'💬 Oral — tentative 3',
+    'm5-t1':'🎒 Skills — tentative 1','m5-t2':'🎒 Skills — tentative 2','m5-t3':'🎒 Skills — tentative 3',
+    'm6-t1':'🎬 Vidéo — tentative 1','m6-t2':'🎬 Vidéo — tentative 2','m6-t3':'🎬 Vidéo — tentative 3'};
+  const rows=Object.entries(S.res).map(([k,v])=>{
+    const scoreTxt=v.score!=null?`${v.score}/${v.total}`:(v.grade!=null?`${v.grade}/10`:'—');
+    return`<tr><td style="padding:9px;font-weight:700;font-size:.84rem">${LN[k]||k}</td><td style="padding:9px"><span style="background:${v.success?'var(--green)':'var(--red)'};color:#fff;padding:2px 9px;border-radius:4px;font-size:.73rem;font-weight:800">${v.success?'✓ Réussi':'✗ Non réussi'}</span></td><td style="padding:9px;color:#7A6B4D;font-size:.84rem">${scoreTxt}</td><td style="padding:9px;color:${v.pts>=0?'var(--green)':'var(--red)'};font-size:.84rem;font-weight:700">${v.pts>=0?'+':''}${v.pts} pts</td></tr>`;
+  }).join('');
+  const transcript=Object.entries(S.res).map(([k,v])=>{
+    const scoreTxt=v.score!=null?`${v.score}/${v.total}`:(v.grade!=null?`${v.grade}/10`:'—');
+    let inner='';
+    if(v.detail){
+      inner=v.detail.map(d=>`<div style="padding:7px 0;border-top:1px dashed var(--kraftln)"><div style="font-weight:600;font-size:.82rem;color:#333">${d.question}</div><div style="font-size:.78rem;color:${d.ok?'var(--green)':'var(--red)'};margin-top:2px">${d.ok?'✓':'✗'} Réponse donnée : ${d.given}</div>${!d.ok?`<div style="font-size:.78rem;color:var(--green)">✓ Correction : ${d.correct}</div>`:''}</div>`).join('');
+    }else if(v.situation!=null){
+      inner=`<div style="padding:7px 0;font-size:.82rem;color:#555">💬 Situation présentée : <strong>${v.situation||'—'}</strong><br>Note du professeur : <strong>${v.grade}/10</strong></div>`;
+    }
+    return`<div style="background:#FFFCF4;border-radius:6px;padding:12px 14px;margin-bottom:10px;border:1px dashed var(--kraftln)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <strong style="font-size:.86rem;color:var(--navy)">${LN[k]||k}</strong>
+        <span style="font-size:.78rem;color:#7A6B4D">${scoreTxt} • <span style="color:${v.pts>=0?'var(--green)':'var(--red)'};font-weight:700">${v.pts>=0?'+':''}${v.pts} pts</span></span>
+      </div>${inner}
+    </div>`;
+  }).join('');
+  const errs=S.wr.length===0
+    ?`<div class="ok" style="text-align:center;margin-top:6px">🏆 Aucune erreur enregistrée !</div>`
+    :S.wr.map(w=>`<div style="background:#FFFCF4;border:1px solid var(--kraftln);border-radius:5px;padding:11px;margin-bottom:8px"><div style="font-weight:700;font-size:.84rem;color:#333">${w.question}</div><div style="color:var(--red);font-size:.8rem;margin-top:3px">✗ Réponse donnée : ${w.given||'—'}</div><div style="color:var(--green);font-size:.8rem">✓ Réponse correcte : ${w.correct}</div></div>`).join('');
+  const m7block=(S.m7.text&&wc(S.m7.text)>0)
+    ?`<div class="card"><div class="pop" style="color:var(--stamp);margin-bottom:10px;font-size:.95rem">✍️ Étape finale — Email (${wc(S.m7.text)} mots)</div><p style="white-space:pre-wrap;font-size:.87rem;line-height:1.7;color:#333">${(S.m7.text||'').replace(/</g,'&lt;')}</p></div>`
+    :'';
+  return`<div id="rep" style="max-width:780px;margin:0 auto;padding:20px;padding-bottom:40px">
+  <div class="noprint" style="margin-bottom:14px;display:flex;gap:9px;flex-wrap:wrap">
+    ${btn('← Retour',"go(S._returnTo||'vic',S._returnE||{})",'gray','sm')}
+    ${btn('🖨️ Imprimer / Enregistrer PDF','window.print()','navy','sm')}
+  </div>
+  <div style="background:var(--navy);border-radius:8px;padding:28px;text-align:center;color:#fff;margin-bottom:16px;print-color-adjust:exact;-webkit-print-color-adjust:exact">
+    <div class="pop" style="font-size:1.4rem;margin-bottom:4px">🧭 Around the World: Gap Year Mission</div>
+    <div style="opacity:.85;font-size:.88rem">English Escape Game — Bac Pro</div>
+    <div style="opacity:.7;font-size:.78rem;margin-top:4px">${new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'})}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+    <div class="card" style="text-align:center;border-top:3px solid var(--navy)"><div style="font-weight:800;font-size:1rem;color:var(--navy)">${S.id||'—'}</div><div style="color:#7A6B4D;font-size:.78rem;margin-top:3px">Identifiant</div></div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--stamp)"><div class="pop" style="font-size:1.7rem;color:var(--navy)">${S.pts}</div><div style="color:#7A6B4D;font-size:.78rem">Points • ${dur}</div><div style="margin-top:6px">${stars(starRating(S.pts,360).s)}</div></div>
+  </div>
+  <div class="card"><div class="pop" style="color:var(--navy);margin-bottom:12px;font-size:.95rem">🎯 Résultats par mission</div>
+    <table style="width:100%;border-collapse:collapse"><tr style="background:var(--nl)"><th style="padding:9px;text-align:left;font-size:.8rem;font-weight:800">Mission</th><th style="padding:9px;text-align:left;font-size:.8rem;font-weight:800">Résultat</th><th style="padding:9px;text-align:left;font-size:.8rem;font-weight:800">Score</th><th style="padding:9px;text-align:left;font-size:.8rem;font-weight:800">Points</th></tr>${rows}</table>
+  </div>
+  <div class="card"><div class="pop" style="color:var(--navy);margin-bottom:12px;font-size:.95rem">📝 Détail des réponses, corrections et scoring</div>${transcript||'<p style="color:#A9976D;font-size:.85rem">Aucune mission complétée pour le moment.</p>'}</div>
+  ${m7block}
+  <div class="card"><div class="pop" style="color:var(--red);margin-bottom:12px;font-size:.95rem">❌ Erreurs commises</div>${errs}</div>
+  <div style="background:var(--navy);border-radius:8px;padding:14px 22px;text-align:center;font-family:'Special Elite';font-weight:400;font-size:1.05rem;color:#fff;margin-bottom:14px">✅ THIS TRIP CHANGED MY LIFE FOREVER</div>
+  <div style="text-align:center;color:#A9976D;font-size:.76rem">Créé par C. Iemfre • Around the World: Gap Year Mission — English Escape Game Bac Pro</div>
+  </div>`;
+}
+
+/* ═══════════════════════════ RGPD (texte reproduit mot pour mot) ═══════════════════════════ */
+function vRGPD(){
+  return`<div style="min-height:100vh;padding:20px 18px 40px">
+  <div style="max-width:580px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-top:8px">
+      <span style="color:#A9976D;cursor:pointer;font-size:.83rem;font-weight:700" onclick="go('home')">← Retour</span>
+    </div>
+    <div style="background:var(--navy);border-radius:8px;padding:26px;text-align:center;color:#fff;margin-bottom:18px;print-color-adjust:exact;-webkit-print-color-adjust:exact">
+      <div style="font-size:2.2rem;margin-bottom:8px">🔒</div>
+      <h1 class="pop" style="font-size:1.3rem;margin-bottom:4px">Protection des données personnelles</h1>
+      <p style="opacity:.75;font-size:.82rem">Around the World: Gap Year Mission — English Escape Game</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--navy);margin-bottom:10px">
+      <p style="color:#333;font-size:.9rem;line-height:1.82">Cette application est un outil pédagogique développé pour un usage en classe.</p>
+    </div>
+    <div style="display:grid;gap:9px;margin-bottom:18px">
+      <div class="card" style="padding:15px 16px">
+        <p style="color:#333;font-size:.88rem;line-height:1.82">Aucune donnée n'est transmise à un serveur externe : toutes les informations (nom d'équipe, identifiants, réponses, score, progression) restent uniquement stockées localement dans la mémoire de votre navigateur, sur l'appareil utilisé.</p>
+      </div>
+      <div class="card" style="padding:15px 16px">
+        <p style="color:#333;font-size:.88rem;line-height:1.82">Aucun cookie tiers, aucun traceur publicitaire, aucun appel à une API externe n'est utilisé.</p>
+      </div>
+      <div class="card" style="padding:15px 16px">
+        <p style="color:#333;font-size:.88rem;line-height:1.82">Les seules données saisies sont : le nom de votre équipe, les deux premières lettres de votre prénom et de votre nom (utilisées uniquement pour générer un identifiant au format XX-YY, sans jamais collecter votre identité complète), ainsi que vos réponses aux exercices et votre progression dans le jeu.</p>
+      </div>
+      <div class="card" style="padding:15px 16px">
+        <p style="color:#333;font-size:.88rem;line-height:1.82">Ces données sont conservées localement sur l'appareil utilisé, sous le nom de votre équipe, afin de vous permettre de reprendre votre progression lors d'une prochaine séance, sur ce même appareil. Elles ne sont jamais transmises, partagées, ni consultées par un tiers. Votre équipe peut à tout moment recommencer à zéro (la progression enregistrée est alors remplacée), ou effacer ces données en vidant les données de navigation de ce site dans votre navigateur.</p>
+      </div>
+      <div class="card" style="padding:15px 16px">
+        <p style="color:#333;font-size:.88rem;line-height:1.82">Le PDF généré est créé localement dans votre navigateur ; il n'est envoyé à personne automatiquement. C'est à vous de le transmettre à votre professeur.</p>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+/* ═══════════════════════════ ROUTER ═══════════════════════════ */
+function go(scr,ei={}){E=ei;S.scr=scr;render();window.scrollTo(0,0);}
+function render(){document.getElementById('app').innerHTML=view()+profFab()+scoreBadge()+reportFab();saveProgress();}
+function view(){
+  const sc=S.scr;
+  if(sc==='home')return vHome();
+  if(sc==='rules')return vRules();
+  if(sc==='rgpd')return vRGPD();
+  if(sc==='tlg')return vLogin('Interface Professeur','tdb');
+  if(sc==='tdb')return vTeacher();
+  if(sc==='slg')return vLogin('Connexion Élève','ident');
+  if(sc==='ident')return vIdent();
+
+  const W=hdr;
+  /* Mission 1 — Why a Gap Year? (QCM) */
+  if(sc==='m1i')return W(1)+`<div class="page">${lvlIntro('📝','Mission 1 — Why a Gap Year?','Objectifs et motivations','<p style="font-weight:700;margin-bottom:7px">What drives young people to take a gap year?</p><p style="font-size:.88rem;color:#555;line-height:1.7">Avant de partir, prouvez que vous maîtrisez le vocabulaire des objectifs et motivations d\u2019un gap year. 10 questions. Seuil de réussite : ≥ 8/10. 3 tentatives possibles, aucun blocage.</p>',"startWritten('m1','qcm')",'navy')}</div>`;
+  if(sc==='wex'&&E.mission==='m1')return W(1)+`<div class="page">${E._banner||''}<div class="card card-navy"><div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><span style="background:var(--navy);color:#fff;padding:3px 12px;border-radius:4px;font-weight:800;font-size:.8rem">Tentative ${S.att.m1}</span><strong style="font-size:.95rem">QCM — Why a Gap Year?</strong></div>${vQCM()}</div></div>`;
+  if(sc==='m1d')return W(1)+`<div class="page">${indiceScreen('m1',"go('m2i')")}</div>`;
+
+  /* Mission 2 — Gap Year Options (matching FR/EN) */
+  if(sc==='m2i')return W(2)+`<div class="page">${lvlIntro('🧩','Mission 2 — Gap Year Options','Types de missions','<p style="font-weight:700;margin-bottom:7px">So many ways to spend a gap year!</p><p style="font-size:.88rem;color:#555;line-height:1.7">Associez chaque terme français à sa traduction anglaise : voyage, bénévolat, stage, études à l\u2019étranger... Seuil : ≥ 8/10. 3 tentatives possibles, aucun blocage.</p><p style="color:var(--red);font-weight:700;font-size:.84rem;margin-top:8px">⚠️ Une fois une association validée, impossible de revenir en arrière !</p>',"startWritten('m2','match2')",'stamp')}</div>`;
+  if(sc==='wex'&&E.mission==='m2')return W(2)+`<div class="page">${E._banner||''}<div class="card card-stamp"><div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><span style="background:var(--stamp);color:#fff;padding:3px 12px;border-radius:4px;font-weight:800;font-size:.8rem">Tentative ${S.att.m2}</span><strong style="font-size:.95rem">Correspondance FR/EN — Gap Year Options</strong></div>${vMatch()}</div></div>`;
+  if(sc==='m2d')return W(2)+`<div class="page">${indiceScreen('m2',"go('m3i')")}</div>`;
+
+  /* Mission 3 — Real Stories (VF) */
+  if(sc==='m3i')return W(3)+`<div class="page">${lvlIntro('📖','Mission 3 — Real Stories','Compréhension écrite','<p style="font-weight:700;margin-bottom:7px">Real stories, real obstacles.</p><p style="font-size:.88rem;color:#555;line-height:1.7">Lisez le témoignage puis répondez aux 8 affirmations Vrai/Faux. Seuil : ≥ 80% à la 1ère tentative, ≥ 70% à la 2e. 3 tentatives possibles, aucun blocage.</p>',"startWritten('m3','vf')",'gold')}</div>`;
+  if(sc==='wex'&&E.mission==='m3')return W(3)+`<div class="page">${E._banner||''}<div class="card card-gold"><div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><span style="background:var(--gold);color:#2B2117;padding:3px 12px;border-radius:4px;font-weight:800;font-size:.8rem">Tentative ${S.att.m3}</span><strong style="font-size:.95rem">Vrai / Faux</strong></div>${vVF()}</div></div>`;
+  if(sc==='m3d')return W(3)+`<div class="page">${indiceScreen('m3',"go('m4i')")}</div>`;
+
+  /* Mission 4 — Convince Them (Oral) */
+  if(sc==='m4i')return W(4)+`<div class="page">${lvlIntro('💬','Mission 4 — Convince Them','Expression orale','<p style="font-weight:700;margin-bottom:7px">Time to defend your project!</p><p style="font-size:.88rem;color:#555;line-height:1.7">Vous devez convaincre un interlocuteur sceptique du bien-fondé de votre projet de gap year, en anglais. <strong>Mots-clés seulement, 8 maximum, aucune phrase apprise.</strong></p>',"startOral('m4')",'navy')}</div>`;
+  if(sc==='oex'&&E.mission==='m4')return W(4)+`<div class="page">${vOral()}</div>`;
+  if(sc==='m4d')return W(4)+`<div class="page">${indiceScreen('m4',"go('m5i')")}</div>`;
+
+  /* Mission 5 — Skills Gained (matching EN word/definition) */
+  if(sc==='m5i')return W(5)+`<div class="page">${lvlIntro('🎒','Mission 5 — Skills Gained','Compétences développées','<p style="font-weight:700;margin-bottom:7px">What do you gain from a gap year?</p><p style="font-size:.88rem;color:#555;line-height:1.7">Associez chaque compétence à sa définition en anglais. Seuil : ≥ 8/10. 3 tentatives possibles, aucun blocage.</p><p style="color:var(--red);font-weight:700;font-size:.84rem;margin-top:8px">⚠️ Une fois une association validée, impossible de revenir en arrière !</p>',"startWritten('m5','match5')",'stamp')}</div>`;
+  if(sc==='wex'&&E.mission==='m5')return W(5)+`<div class="page">${E._banner||''}<div class="card card-stamp"><div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><span style="background:var(--stamp);color:#fff;padding:3px 12px;border-radius:4px;font-weight:800;font-size:.8rem">Tentative ${S.att.m5}</span><strong style="font-size:.95rem">Correspondance — Skills Gained</strong></div>${vMatch()}</div></div>`;
+  if(sc==='m5d')return W(5)+`<div class="page">${indiceScreen('m5',"go('m6i')")}</div>`;
+
+  /* Mission 6 — Watch & Understand (video) */
+  if(sc==='m6i')return W(6)+`<div class="page">${lvlIntro('🎬','Mission 6 — Watch & Understand','Compréhension orale','<p style="font-weight:700;margin-bottom:7px">One last mission: watch and understand!</p><p style="font-size:.88rem;color:#555;line-height:1.7">Regardez la vidéo puis répondez aux 12 questions (Vrai/Faux et QCM mélangés). Seuil : ≥ 80% à la 1ère tentative, ≥ 70% à la 2e. 3 tentatives possibles, aucun blocage.</p>',"startVideo()",'gold')}</div>`;
+  if(sc==='vex')return W(6)+`<div class="page">${vVideo()}</div>`;
+  if(sc==='m6d')return W(6)+`<div class="page">${indiceScreen('m6',"go('fin')")}</div>`;
+
+  if(sc==='fin')return W(6)+`<div class="page">${vFinal()}</div>`;
+  if(sc==='vic')return W(6)+`<div class="page">${vVictory()}</div>`;
+  if(sc==='m7')return W(6)+`<div class="page">${vM7()}</div>`;
+  if(sc==='rep')return vReport();
+  return'<p>Écran inconnu</p>';
+}
+render();
+</script></body></html>
