@@ -297,7 +297,8 @@ const LS_PREFIX='gymg_progress_';
 function idKey(id){return LS_PREFIX+(id||'').trim().toUpperCase();}
 function saveProgress(){
   if(!S.id||!S.t0)return;
-  try{localStorage.setItem(idKey(S.id),JSON.stringify(S));}catch(e){}
+  /* On sauvegarde aussi E (contenu de l'exercice en cours) pour pouvoir reprendre exactement où l'élève s'est arrêté */
+  try{localStorage.setItem(idKey(S.id),JSON.stringify(Object.assign({},S,{_E:E})));}catch(e){}
 }
 function loadProgress(id){
   try{
@@ -486,8 +487,21 @@ function vTeacher(){
 }
 
 /* ═══════════════════════════ IDENTIFICATION (mode individuel) ═══════════════════════════ */
+function identActions(){
+  const fn=F.fn||'',ln=F.ln||'';
+  const id=(fn.length===2&&ln.length===2)?`${fn}-${ln}`:'';
+  if(!id)return `<div style="text-align:center;margin-bottom:10px"><span style="color:#CFC1A0;font-weight:800">--</span></div>${btn('🧭 Lancer la mission !',"startGame('new')",'navy','full lg')}`;
+  const chip=`<div style="text-align:center;margin-bottom:10px"><span class="chip">${id}</span></div>`;
+  const saved=loadProgress(id);
+  if(saved){
+    return chip+`<div class="ok" style="font-size:.82rem;line-height:1.6;margin-bottom:10px">✅ Progression retrouvée pour <strong>${id}</strong> — ${saved.pts} pts.</div>
+    ${btn('▶️ Reprendre ma partie',"startGame('resume')",'navy','full lg')}
+    <div style="margin-top:8px">${btn('🔄 Reprendre à zéro',"startGame('reset')",'gray','full')}</div>`;
+  }
+  return chip+btn('🧭 Lancer la mission !',"startGame('new')",'navy','full lg');
+}
+function updIdent(){const el=document.getElementById('identActions');if(el)el.innerHTML=identActions();}
 function vIdent(){
-  const fn=(F.fn||'').slice(0,2),ln=(F.ln||'').slice(0,2);
   return `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
   <div class="card fadein" style="max-width:420px;width:100%;border-top:4px solid var(--navy)">
     <div style="text-align:center;margin-bottom:20px">
@@ -496,49 +510,49 @@ function vIdent(){
       <p style="color:#7A6B4D;font-size:.82rem;margin-top:3px">Jeu individuel — un identifiant par élève</p>
     </div>
     <label style="font-weight:700;display:block;margin-bottom:6px;font-size:.85rem;color:#444">2 premières lettres de votre prénom</label>
-    <input id="fn" type="text" placeholder="Ex : JO" maxlength="2" value="${F.fn||''}" oninput="F.fn=this.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,2);render()" style="margin-bottom:9px;text-align:center;font-weight:800;letter-spacing:.12em">
+    <input id="fn" type="text" placeholder="Ex : JO" maxlength="2" autocomplete="off" value="${F.fn||''}" oninput="F.fn=this.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,2);updIdent()" style="margin-bottom:9px;text-align:center;font-weight:800;letter-spacing:.12em">
     <label style="font-weight:700;display:block;margin-bottom:6px;font-size:.85rem;color:#444">2 premières lettres de votre nom</label>
-    <input id="ln" type="text" placeholder="Ex : SM" maxlength="2" value="${F.ln||''}" oninput="F.ln=this.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,2);render()" style="margin-bottom:9px;text-align:center;font-weight:800;letter-spacing:.12em">
-    <div style="text-align:center;margin-bottom:10px">${fn&&ln?`<span class="chip">${fn}-${ln}</span>`:'<span style="color:#CFC1A0;font-weight:800">--</span>'}</div>
-    <p style="color:#A9976D;font-size:.74rem;margin-bottom:8px">💾 Reprenez une séance précédente en ressaisissant exactement le même identifiant.</p>
-    <div id="savedBanner" style="margin-bottom:8px">${F._savedBannerHtml||''}</div>
+    <input id="ln" type="text" placeholder="Ex : SM" maxlength="2" autocomplete="off" value="${F.ln||''}" oninput="F.ln=this.value.replace(/[^a-zA-Z]/g,'').toUpperCase().slice(0,2);updIdent()" style="margin-bottom:9px;text-align:center;font-weight:800;letter-spacing:.12em">
+    <p style="color:#A9976D;font-size:.74rem;margin-bottom:8px">💾 Reprenez une séance précédente en ressaisissant exactement le même identifiant (sur le même appareil).</p>
     <div id="ge" style="color:var(--red);font-weight:700;font-size:.83rem;min-height:17px;margin-bottom:6px"></div>
-    ${btn('🧭 Lancer la mission !','startGame()','navy','full lg')}
+    <div id="identActions">${identActions()}</div>
   </div></div>`;
 }
-function checkSavedProgress(){
-  const id=`${(F.fn||'')}-${(F.ln||'')}`;
-  F._forceNew=false;
-  if(!F.fn||!F.ln)return;
-  const saved=loadProgress(id);
-  let html='';
-  if(saved){
-    html=`<div class="ok" style="font-size:.82rem;line-height:1.6">✅ Progression retrouvée pour <strong>${id}</strong> — ${saved.pts} pts. Cliquez sur « Lancer la mission » pour reprendre, ou <span style="text-decoration:underline;cursor:pointer;color:var(--red);font-weight:700" onclick="forceNewGame()">recommencer à zéro</span>.</div>`;
-  }
-  F._savedBannerHtml=html;
-}
-function forceNewGame(){
-  F._forceNew=true;
-  F._savedBannerHtml=`<div class="ko" style="font-size:.82rem">🔄 Une nouvelle partie sera démarrée (l'ancienne progression sera remplacée).</div>`;
-  render();
-}
-function startGame(){
-  if(!F.fn||!F.ln){const e=document.getElementById('ge');if(e)e.textContent='Renseignez vos deux initiales';return;}
+const BAD_RESUME_SCREENS=['home','tlg','tdb','rules','slg','ident','rgpd'];
+function startGame(mode){
+  if(!F.fn||!F.ln||F.fn.length<2||F.ln.length<2){const e=document.getElementById('ge');if(e)e.textContent='Renseignez 2 lettres pour le prénom et 2 lettres pour le nom';return;}
   const id=`${F.fn}-${F.ln}`;
-  checkSavedProgress();
-  if(!F._forceNew){
+  if(mode==='resume'){
     const saved=loadProgress(id);
-    if(saved){S=saved;F={};go(S.scr||'m1i');return;}
+    if(saved){
+      const ev=saved._E||{};delete saved._E;
+      S=saved;F={};
+      if(BAD_RESUME_SCREENS.includes(S.scr)){safeResume();return;}
+      go(S.scr||'m1i',ev);return;
+    }
   }
+  if(mode==='reset'&&!confirm('Effacer la progression enregistrée et recommencer à zéro ?'))return;
   S.sh=shuf(WW);S.wordFor={m1:S.sh[0],m2:S.sh[1],m3:S.sh[2],m4:S.sh[3],m5:S.sh[4],m6:S.sh[5]};S.rv=[];S.res={};S.wr=[];S.pts=0;
   S.id=id;S.t0=Date.now();S.t1=null;
   S.att={m1:1,m2:1,m3:1,m4:1,m5:1,m6:1};
-  {const shp=shuf(POOL1);S.sets1=[shp.slice(0,10),shp.slice(0,10),shp.slice(0,10)];}
+  {const shp=shuf(POOL1);S.sets1=[shp.slice(0,10),shp.slice(10,20),shuf(shp).slice(0,10)];}
   {const shp2=shuf(POOL2);S.sets2=[shp2.slice(0,10),shp2.slice(10,20),shuf(shp2).slice(0,10)];}
   {const shp5=shuf(POOL5);S.sets5=[shp5.slice(0,10),shp5.slice(10,20),shuf(shp5).slice(0,10)];}
   S.m7={text:''};
   F={};
   go('m1i');
+}
+/* Filet de sécurité : reconstruit un écran valide à partir de la progression (fragments obtenus + tentative en cours) */
+function safeResume(){
+  window._rt=(window._rt||0)+1;
+  if(window._rt>5||!S.t0||!S.id){window._rt=0;go('home');return;}
+  const n=S.rv.length+1;
+  if(n>6){go(S.t1?'vic':'fin');return;}
+  const m='m'+n;
+  const att=Math.max(1,Math.min(S.att[m]||1,3));
+  if(m==='m4'){goOralAttempt('m4',att-1);return;}
+  if(m==='m6'){goVideoAttempt();return;}
+  goWrittenAttempt(m,{m1:'qcm',m2:'match2',m3:'vf',m5:'match5'}[m],att-1);
 }
 
 /* ═══════════════════════════ WRITTEN EXERCISES (QCM / VF / MATCH) ═══════════════════════════ */
@@ -559,6 +573,8 @@ function goWrittenAttempt(mission,kind,attIdx,banner){
   }else if(kind==='match5'){
     const ps=S.sets5[attIdx];
     go('wex',{mission,kind,ps,sh:shuf(ps.map((_,i)=>i)),sel:null,mt:{},done:false,_banner:banner});
+  }else if(kind==='video'){
+    goVideoAttempt(banner);
   }
 }
 function resolveWritten(mission,kind,score,total,wrongItems,detail){
@@ -736,7 +752,7 @@ function vOral(){
       <div style="font-size:2rem;margin-bottom:8px">🏆</div>
       <h3 class="pop" style="color:var(--stamp);margin-bottom:5px;font-size:1.1rem">Note orale</h3>
       <p style="color:#555;font-size:.88rem;margin-bottom:16px">Saisissez la note sur 10 annoncée par le professeur</p>
-      <input id="gval" type="number" min="0" max="10" placeholder="Note / 10" style="text-align:center;font-size:1.2rem;font-weight:800;margin-bottom:10px">
+      <input id="gval" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex : 8 ou 7,5" onkeydown="if(event.key==='Enter')submitGrade()" style="text-align:center;font-size:1.2rem;font-weight:800;margin-bottom:10px">
       <div id="gerr" style="color:var(--red);font-weight:700;font-size:.82rem;min-height:16px;margin-bottom:8px"></div>
       ${btn('✅ Valider la note','submitGrade()','stamp','full lg')}
     </div>`;
@@ -747,9 +763,10 @@ function vOral(){
   </div>${body}</div>`;
 }
 function submitGrade(){
-  const raw=(document.getElementById('gval')||{}).value;
-  const g=Number(raw);
-  if(raw===''||isNaN(g)||g<0||g>10){const e=document.getElementById('gerr');if(e)e.textContent='Entrez une note entre 0 et 10';return;}
+  const raw=String((document.getElementById('gval')||{}).value||'').trim();
+  /* Accepte "8", "7,5", "7.5", "8/10" (clavier français / tablette) */
+  const g=Number(raw.replace(/\s*\/\s*10$/,'').replace(',','.'));
+  if(raw===''||isNaN(g)||g<0||g>10){const e=document.getElementById('gerr');if(e)e.textContent='Entrez la note annoncée par le professeur, entre 0 et 10 (ex : 8 ou 7,5)';return;}
   resolveOral(E.mission,g);
 }
 
@@ -761,7 +778,7 @@ function startVideo(){
 function goVideoAttempt(banner){
   go('vex',{qs:shuf(M6Q),ans:{},done:false,_banner:banner});
 }
-function vVideo(){
+function vidQuestions(){
   const{qs,ans={},done=false}=E;if(!qs)return'';
   const score=qs.filter((q,i)=>{const g=ans[i];if(g==null)return false;return q.type==='vf'?g===q.a:g===q.c;}).length;
   const rows=qs.map((q,i)=>{
@@ -772,8 +789,8 @@ function vVideo(){
         <span style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:#fff;flex-shrink:0">${i+1}</span>
         <span style="flex:1;font-weight:600;font-size:.85rem;line-height:1.4">${q.s}</span>
         <div style="display:flex;gap:5px;flex-shrink:0">
-          <button class="tvf" onclick="${done?'':(`E.ans[${i}]=true;render()`)}" style="border-color:var(--green);color:${ans[i]===true?'#fff':'var(--green)'};background:${ans[i]===true?'var(--green)':'#fff'}">TRUE</button>
-          <button class="tvf" onclick="${done?'':(`E.ans[${i}]=false;render()`)}" style="border-color:var(--red);color:${ans[i]===false?'#fff':'var(--red)'};background:${ans[i]===false?'var(--red)':'#fff'}">FALSE</button>
+          <button class="tvf" onclick="${done?'':(`E.ans[${i}]=true;vidRefresh()`)}" style="border-color:var(--green);color:${ans[i]===true?'#fff':'var(--green)'};background:${ans[i]===true?'var(--green)':'#fff'}">TRUE</button>
+          <button class="tvf" onclick="${done?'':(`E.ans[${i}]=false;vidRefresh()`)}" style="border-color:var(--red);color:${ans[i]===false?'#fff':'var(--red)'};background:${ans[i]===false?'var(--red)':'#fff'}">FALSE</button>
         </div>
         ${done?`<span style="font-weight:800;color:${ans[i]===q.a?'var(--green)':'var(--red)'}">${ans[i]===q.a?'✓':'✗'}</span>`:''}
       </div>`;
@@ -783,7 +800,7 @@ function vVideo(){
       if(ans[i]===oi){bc='var(--navy)';bg='#E3EDF1';}
       if(done&&oi===q.c){bc='var(--green)';bg='#E9F3EA';}
       if(done&&ans[i]===oi&&oi!==q.c){bc='var(--red)';bg='#F8E6E2';}
-      return`<div class="opt" onclick="${done?'':(`E.ans[${i}]=${oi};render()`)}" style="border-color:${bc};background:${bg};margin-bottom:5px">
+      return`<div class="opt" onclick="${done?'':(`E.ans[${i}]=${oi};vidRefresh()`)}" style="border-color:${bc};background:${bg};margin-bottom:5px">
         <span style="flex:1;font-size:.83rem">${opt}</span>
         ${done&&oi===q.c?'<span style="color:var(--green);font-weight:800">✓</span>':''}${done&&ans[i]===oi&&oi!==q.c?'<span style="color:var(--red);font-weight:800">✗</span>':''}
       </div>`;
@@ -796,14 +813,23 @@ function vVideo(){
   const allA=Object.keys(ans).length===qs.length;
   const bot=done
     ?`<div style="display:flex;gap:8px;width:100%"><div class="ok" style="flex:1;margin:0">${score}/${qs.length} bonnes réponses</div>${btn('Continuer →','videoDone()','stamp')}</div>`
-    :btn('✅ Valider mes réponses',`E.done=true;render()`,'navy','',!allA);
+    :btn('✅ Valider mes réponses',`E.done=true;vidRefresh()`,'navy','',!allA);
+  return`${rows}<div style="margin-top:12px;display:flex;justify-content:flex-end">${bot}</div>`;
+}
+function vidRefresh(){
+  const q=document.getElementById('vidq');
+  if(q){q.innerHTML=vidQuestions();saveProgress();}else render();
+}
+function vVideo(){
+  if(!E.qs)return'';
+  const yt='https://www.youtube.com/watch?v='+VIDEO_ID;
   return`<div class="card card-gold fadein">${E._banner||''}<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><span style="background:var(--gold);color:#2B2117;padding:3px 12px;border-radius:4px;font-weight:800;font-size:.8rem">Tentative ${S.att.m6}</span><strong style="font-size:.95rem">Watch & Understand</strong></div>
-  <div style="position:relative;padding-bottom:56.25%;height:0;margin-bottom:14px;border-radius:6px;overflow:hidden;border:2px dashed var(--navy)">
-    <iframe src="https://www.youtube.com/embed/${VIDEO_ID}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen title="Gap year video"></iframe>
+  <div style="position:relative;padding-bottom:56.25%;height:0;margin-bottom:8px;border-radius:6px;overflow:hidden;border:2px dashed var(--navy);background:#1b1b1b">
+    <iframe src="https://www.youtube.com/embed/${VIDEO_ID}?rel=0&playsinline=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="Gap year video"></iframe>
   </div>
+  <div style="font-size:.8rem;margin-bottom:12px;text-align:center">La vidéo ne s'affiche pas ? <a href="${yt}" target="_blank" rel="noopener" style="color:var(--stamp);font-weight:700">▶️ Ouvrir la vidéo sur YouTube (nouvel onglet)</a>, puis revenez ici pour répondre.</div>
   <div class="hint" style="margin-bottom:12px">🎧 Regardez la vidéo (avec le son), puis répondez aux 12 questions ci-dessous.</div>
-  ${rows}
-  <div style="margin-top:12px;display:flex;justify-content:flex-end">${bot}</div></div>`;
+  <div id="vidq">${vidQuestions()}</div></div>`;
 }
 function videoDone(){
   const{qs,ans={}}=E;
@@ -986,8 +1012,16 @@ function vRGPD(){
 }
 
 /* ═══════════════════════════ ROUTER ═══════════════════════════ */
-function go(scr,ei={}){E=ei;S.scr=scr;render();window.scrollTo(0,0);}
-function render(){document.getElementById('app').innerHTML=view()+profFab()+scoreBadge()+reportFab();saveProgress();}
+function go(scr,ei={}){E=ei;S.scr=scr;if(Object.keys(ei).length)window._rt=0;render();window.scrollTo(0,0);}
+function errorScreen(err){
+  return `<div class="page" data-err="1"><div class="card" style="text-align:center;margin-top:30px"><div style="font-size:2rem">🧭</div><h3 class="pop" style="color:var(--stamp);margin:8px 0">Petit incident technique</h3><p style="font-size:.88rem;color:#555;margin-bottom:14px">Votre progression est conservée. Cliquez sur « Reprendre » pour continuer là où vous en étiez.</p>${btn('▶️ Reprendre','safeResume()','navy','lg')}<p style="color:#B3A480;font-size:.68rem;margin-top:14px">Détail technique : ${String(err&&err.message||err).replace(/</g,'&lt;').slice(0,160)}</p></div></div>`;
+}
+function render(){
+  let h,failed=false;
+  try{h=view()+scoreBadge()+reportFab();}catch(err){console.error(err);failed=true;h=errorScreen(err);}
+  document.getElementById('app').innerHTML=h;
+  if(!failed)saveProgress();
+}
 function view(){
   const sc=S.scr;
   if(sc==='home')return vHome();
@@ -998,6 +1032,11 @@ function view(){
   if(sc==='slg')return vLogin('Connexion Élève','ident');
   if(sc==='ident')return vIdent();
 
+  /* Garde-fou : un écran d'exercice sans contenu (ex. rechargement de la page) est reconstruit automatiquement */
+  if(sc==='wex'||sc==='oex'||sc==='vex'){
+    const okE=(sc==='wex'&&E.mission&&(E.qs||E.ps))||(sc==='oex'&&E.mission&&E.content)||(sc==='vex'&&E.qs);
+    if(!okE){setTimeout(safeResume,0);return `<div class="page"><div class="card" style="text-align:center"><p style="margin-bottom:12px">⏳ Reprise de votre exercice…</p>${btn('Reprendre','safeResume()','navy')}</div></div>`;}
+  }
   const W=hdr;
   /* Mission 1 — Why a Gap Year? (QCM) */
   if(sc==='m1i')return W(1)+`<div class="page">${lvlIntro('📝','Mission 1 — Why a Gap Year?','Objectifs et motivations','<p style="font-weight:700;margin-bottom:7px">What drives young people to take a gap year?</p><p style="font-size:.88rem;color:#555;line-height:1.7">Avant de partir, prouvez que vous maîtrisez le vocabulaire des objectifs et motivations d\u2019un gap year. 10 questions. Seuil de réussite : ≥ 8/10. 3 tentatives possibles, aucun blocage.</p>',"startWritten('m1','qcm')",'navy')}</div>`;
@@ -1033,7 +1072,8 @@ function view(){
   if(sc==='vic')return W(6)+`<div class="page">${vVictory()}</div>`;
   if(sc==='m7')return W(6)+`<div class="page">${vM7()}</div>`;
   if(sc==='rep')return vReport();
-  return'<p>Écran inconnu</p>';
+  setTimeout(safeResume,0);
+  return `<div class="page"><div class="card" style="text-align:center"><p style="margin-bottom:12px">⏳ Reprise de votre progression…</p>${btn('Reprendre','safeResume()','navy')}</div></div>`;
 }
 render();
 </script></body></html>
